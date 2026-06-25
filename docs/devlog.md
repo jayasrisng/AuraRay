@@ -23,3 +23,22 @@
 ### Next milestone
 - Add the first actual ray tracing primitive: a camera, rays, and one visible sphere.
 
+## Polish: PNG Export for Portfolio Use
+
+### What we built
+- A `make png` / `make export` target that converts `renders/first_image.ppm` to `renders/first_image.png`.
+
+### Why we built it
+- PPM stays as the renderer's raw output because it is simple, transparent, and dependency-free while learning rendering fundamentals.
+- PNG is useful for GitHub, README images, portfolio screenshots, and social sharing because browsers and preview tools support it directly.
+
+### Challenges
+- We avoided image-writing libraries and kept conversion outside the renderer.
+- The available lightweight macOS tool is `sips`, so the export flow uses that instead of adding ImageMagick or a C++ PNG dependency.
+
+### What changed
+- Updated `Makefile` with `png` and `export` targets.
+- Generated a PNG version of the first render.
+
+### Next milestone
+- Add the first actual ray tracing primitive: a camera, rays, and one visible sphere.
