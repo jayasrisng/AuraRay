@@ -12,6 +12,12 @@ ANTIALIAS_SPHERE_PPM := renders/antialias_sphere.ppm
 ANTIALIAS_SPHERE_PNG := renders/antialias_sphere.png
 MINIMAL_RAYTRACER_PPM := renders/minimal_raytracer.ppm
 MINIMAL_RAYTRACER_PNG := renders/minimal_raytracer.png
+GLASS_ORBS_PPM := renders/glass_orbs.ppm
+GLASS_ORBS_PNG := renders/glass_orbs.png
+XR_LENS_DEMO_PPM := renders/xr_lens_demo.ppm
+XR_LENS_DEMO_PNG := renders/xr_lens_demo.png
+WARM_STUDIO_SPHERES_PPM := renders/warm_studio_spheres.ppm
+WARM_STUDIO_SPHERES_PNG := renders/warm_studio_spheres.png
 
 .PHONY: all run png export clean
 
@@ -29,6 +35,9 @@ png export: run
 	sips -s format png $(FIRST_SPHERE_PPM) --out $(FIRST_SPHERE_PNG)
 	sips -s format png $(ANTIALIAS_SPHERE_PPM) --out $(ANTIALIAS_SPHERE_PNG)
 	sips -s format png $(MINIMAL_RAYTRACER_PPM) --out $(MINIMAL_RAYTRACER_PNG)
+	sips -s format png $(GLASS_ORBS_PPM) --out $(GLASS_ORBS_PNG)
+	sips -s format png $(XR_LENS_DEMO_PPM) --out $(XR_LENS_DEMO_PNG)
+	sips -s format png $(WARM_STUDIO_SPHERES_PPM) --out $(WARM_STUDIO_SPHERES_PNG)
 
 clean:
 	rm -rf $(BUILD_DIR)

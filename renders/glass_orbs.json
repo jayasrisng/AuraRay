@@ -1,0 +1,13 @@
+{
+  "scene_name": "glass_orbs",
+  "output_ppm": "renders/glass_orbs.ppm",
+  "output_png": "renders/glass_orbs.png",
+  "image_width": 400,
+  "image_height": 225,
+  "samples_per_pixel": 80,
+  "max_depth": 8,
+  "render_time_ms": 2123,
+  "sphere_count": 5,
+  "materials_used": ["lambertian", "metal", "dielectric"],
+  "camera_description": "Cool-toned camera looking slightly downward at refractive and metallic orbs."
+}

@@ -1,10 +1,12 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <chrono>
 #include <cmath>
 #include <limits>
 #include <memory>
 #include <random>
+#include <string>
 #include <vector>
 
 constexpr int image_width = 400;
@@ -140,6 +142,14 @@ vec3 reflect(const vec3& v, const vec3& n) {
     return v - 2 * dot(v, n) * n;
 }
 
+vec3 refract(const vec3& uv, const vec3& n, double etai_over_etat) {
+    const double cos_theta = std::fmin(dot(-uv, n), 1.0);
+    const vec3 r_out_perp = etai_over_etat * (uv + cos_theta * n);
+    const vec3 r_out_parallel =
+        -std::sqrt(std::fabs(1.0 - r_out_perp.length_squared())) * n;
+    return r_out_perp + r_out_parallel;
+}
+
 double clamp(double x, double min, double max) {
     if (x < min) {
         return min;
@@ -262,6 +272,44 @@ class metal : public material {
   private:
     color albedo_;
     double fuzz_;
+};
+
+class dielectric : public material {
+  public:
+    explicit dielectric(double index_of_refraction)
+        : index_of_refraction_(index_of_refraction) {}
+
+    bool scatter(const ray& r_in, const hit_record& rec, color& attenuation,
+                 ray& scattered, std::mt19937& rng) const override {
+        attenuation = color(1.0, 1.0, 1.0);
+        const double refraction_ratio =
+            rec.front_face ? (1.0 / index_of_refraction_) : index_of_refraction_;
+
+        const vec3 unit_direction = unit_vector(r_in.direction());
+        const double cos_theta = std::fmin(dot(-unit_direction, rec.normal), 1.0);
+        const double sin_theta = std::sqrt(1.0 - cos_theta * cos_theta);
+
+        const bool cannot_refract = refraction_ratio * sin_theta > 1.0;
+        vec3 direction;
+        if (cannot_refract ||
+            reflectance(cos_theta, refraction_ratio) > random_double(rng)) {
+            direction = reflect(unit_direction, rec.normal);
+        } else {
+            direction = refract(unit_direction, rec.normal, refraction_ratio);
+        }
+
+        scattered = ray(rec.p, direction);
+        return true;
+    }
+
+  private:
+    static double reflectance(double cosine, double refraction_index) {
+        double r0 = (1 - refraction_index) / (1 + refraction_index);
+        r0 = r0 * r0;
+        return r0 + (1 - r0) * std::pow((1 - cosine), 5);
+    }
+
+    double index_of_refraction_;
 };
 
 class sphere {
@@ -548,6 +596,181 @@ bool render_minimal_raytracer(const std::filesystem::path& output_path) {
     return true;
 }
 
+void write_metadata(const std::filesystem::path& metadata_path,
+                    const std::string& scene_name,
+                    const std::filesystem::path& output_ppm,
+                    const std::filesystem::path& output_png, int image_height,
+                    int preset_samples_per_pixel, long long render_time_ms,
+                    int sphere_count,
+                    const std::vector<std::string>& materials_used,
+                    const std::string& camera_description) {
+    std::ofstream out(metadata_path);
+    if (!out) {
+        std::cerr << "Failed to open " << metadata_path << " for writing.\n";
+        return;
+    }
+
+    out << "{\n";
+    out << "  \"scene_name\": \"" << scene_name << "\",\n";
+    out << "  \"output_ppm\": \"" << output_ppm.string() << "\",\n";
+    out << "  \"output_png\": \"" << output_png.string() << "\",\n";
+    out << "  \"image_width\": " << image_width << ",\n";
+    out << "  \"image_height\": " << image_height << ",\n";
+    out << "  \"samples_per_pixel\": " << preset_samples_per_pixel << ",\n";
+    out << "  \"max_depth\": " << max_ray_depth << ",\n";
+    out << "  \"render_time_ms\": " << render_time_ms << ",\n";
+    out << "  \"sphere_count\": " << sphere_count << ",\n";
+    out << "  \"materials_used\": [";
+    for (std::size_t i = 0; i < materials_used.size(); ++i) {
+        out << "\"" << materials_used[i] << "\"";
+        if (i + 1 < materials_used.size()) {
+            out << ", ";
+        }
+    }
+    out << "],\n";
+    out << "  \"camera_description\": \"" << camera_description << "\"\n";
+    out << "}\n";
+}
+
+bool render_scene_preset(const std::string& scene_name, const scene& world,
+                         const camera& cam,
+                         const std::filesystem::path& output_ppm,
+                         const std::filesystem::path& output_png,
+                         const std::filesystem::path& metadata_path,
+                         const std::vector<std::string>& materials_used,
+                         const std::string& camera_description,
+                         unsigned int seed) {
+    const int image_height = static_cast<int>(image_width / aspect_ratio);
+    constexpr int preset_samples_per_pixel = 80;
+
+    std::ofstream out;
+    if (!open_ppm(output_ppm, image_width, image_height, out)) {
+        return false;
+    }
+
+    std::mt19937 rng(seed);
+    const auto start = std::chrono::steady_clock::now();
+
+    for (int y = image_height - 1; y >= 0; --y) {
+        for (int x = 0; x < image_width; ++x) {
+            color pixel_color(0, 0, 0);
+
+            for (int sample = 0; sample < preset_samples_per_pixel; ++sample) {
+                const double u =
+                    (static_cast<double>(x) + random_double(rng)) /
+                    (image_width - 1);
+                const double v =
+                    (static_cast<double>(y) + random_double(rng)) /
+                    (image_height - 1);
+                pixel_color += scene_ray_color(cam.get_ray(u, v), world,
+                                               max_ray_depth, rng);
+            }
+
+            write_color(out, pixel_color, preset_samples_per_pixel, true);
+        }
+    }
+
+    const auto end = std::chrono::steady_clock::now();
+    const auto render_time_ms =
+        std::chrono::duration_cast<std::chrono::milliseconds>(end - start)
+            .count();
+
+    std::cout << "Rendered " << output_ppm << " (" << image_width << "x"
+              << image_height << ", " << preset_samples_per_pixel
+              << " samples per pixel)\n";
+
+    write_metadata(metadata_path, scene_name, output_ppm, output_png,
+                   image_height, preset_samples_per_pixel, render_time_ms,
+                   static_cast<int>(world.size()), materials_used,
+                   camera_description);
+    return true;
+}
+
+bool render_glass_orbs(const std::filesystem::path& output_dir) {
+    const auto ground = std::make_shared<lambertian>(color(0.74, 0.80, 0.84));
+    const auto glass = std::make_shared<dielectric>(1.5);
+    const auto pale_blue = std::make_shared<lambertian>(color(0.34, 0.58, 0.86));
+    const auto chrome = std::make_shared<metal>(color(0.82, 0.90, 0.96), 0.02);
+    const auto teal = std::make_shared<metal>(color(0.42, 0.88, 0.90), 0.12);
+
+    const scene world = {
+        sphere(point3(0, -100.55, -1.1), 100.0, ground),
+        sphere(point3(0.0, 0.1, -1.15), 0.52, glass),
+        sphere(point3(-0.88, -0.02, -1.28), 0.36, chrome),
+        sphere(point3(0.82, -0.08, -1.0), 0.31, teal),
+        sphere(point3(0.16, -0.27, -0.55), 0.16, pale_blue),
+    };
+
+    const camera cam(point3(2.25, 1.0, 1.45), point3(0.0, -0.05, -1.05),
+                     vec3(0, 1, 0), 36.0, aspect_ratio);
+
+    return render_scene_preset(
+        "glass_orbs", world, cam, output_dir / "glass_orbs.ppm",
+        output_dir / "glass_orbs.png", output_dir / "glass_orbs.json",
+        {"lambertian", "metal", "dielectric"},
+        "Cool-toned camera looking slightly downward at refractive and metallic "
+        "orbs.",
+        3101);
+}
+
+bool render_xr_lens_demo(const std::filesystem::path& output_dir) {
+    const auto ground = std::make_shared<lambertian>(color(0.70, 0.73, 0.78));
+    const auto lens = std::make_shared<dielectric>(1.45);
+    const auto display_blue =
+        std::make_shared<lambertian>(color(0.16, 0.36, 0.92));
+    const auto magenta = std::make_shared<metal>(color(0.92, 0.22, 0.74), 0.18);
+    const auto cyan = std::make_shared<metal>(color(0.30, 0.95, 0.94), 0.08);
+    const auto graphite = std::make_shared<metal>(color(0.45, 0.47, 0.52), 0.25);
+
+    const scene world = {
+        sphere(point3(0, -100.5, -1.05), 100.0, ground),
+        sphere(point3(0.0, 0.08, -1.1), 0.55, lens),
+        sphere(point3(-0.72, -0.1, -0.72), 0.18, display_blue),
+        sphere(point3(0.72, -0.12, -0.76), 0.18, magenta),
+        sphere(point3(-1.05, 0.04, -1.35), 0.28, cyan),
+        sphere(point3(1.08, 0.02, -1.45), 0.30, graphite),
+        sphere(point3(0.0, -0.31, -0.48), 0.12, display_blue),
+    };
+
+    const camera cam(point3(2.0, 0.85, 1.65), point3(0.0, -0.03, -1.0),
+                     vec3(0, 1, 0), 34.0, aspect_ratio);
+
+    return render_scene_preset(
+        "xr_lens_demo", world, cam, output_dir / "xr_lens_demo.ppm",
+        output_dir / "xr_lens_demo.png", output_dir / "xr_lens_demo.json",
+        {"lambertian", "metal", "dielectric"},
+        "XR-inspired composition with a central refractive lens and small "
+        "colored display-orb accents.",
+        3102);
+}
+
+bool render_warm_studio_spheres(const std::filesystem::path& output_dir) {
+    const auto ground = std::make_shared<lambertian>(color(0.82, 0.75, 0.66));
+    const auto clay = std::make_shared<lambertian>(color(0.86, 0.40, 0.24));
+    const auto gold = std::make_shared<metal>(color(0.94, 0.76, 0.42), 0.09);
+    const auto pearl = std::make_shared<metal>(color(0.92, 0.86, 0.78), 0.28);
+    const auto rose = std::make_shared<lambertian>(color(0.78, 0.22, 0.32));
+
+    const scene world = {
+        sphere(point3(0, -100.52, -1.1), 100.0, ground),
+        sphere(point3(-0.25, 0.08, -1.0), 0.48, clay),
+        sphere(point3(0.72, -0.02, -1.18), 0.40, gold),
+        sphere(point3(-0.92, -0.04, -1.35), 0.34, pearl),
+        sphere(point3(0.14, -0.29, -0.48), 0.17, rose),
+    };
+
+    const camera cam(point3(2.05, 0.95, 1.35), point3(-0.05, -0.03, -1.05),
+                     vec3(0, 1, 0), 37.0, aspect_ratio);
+
+    return render_scene_preset(
+        "warm_studio_spheres", world, cam,
+        output_dir / "warm_studio_spheres.ppm",
+        output_dir / "warm_studio_spheres.png",
+        output_dir / "warm_studio_spheres.json", {"lambertian", "metal"},
+        "Warm studio-style camera looking across a compact sphere arrangement.",
+        3103);
+}
+
 int main() {
     const std::filesystem::path output_dir = "renders";
     std::filesystem::create_directories(output_dir);
@@ -565,6 +788,18 @@ int main() {
     }
 
     if (!render_minimal_raytracer(output_dir / "minimal_raytracer.ppm")) {
+        return 1;
+    }
+
+    if (!render_glass_orbs(output_dir)) {
+        return 1;
+    }
+
+    if (!render_xr_lens_demo(output_dir)) {
+        return 1;
+    }
+
+    if (!render_warm_studio_spheres(output_dir)) {
         return 1;
     }
 

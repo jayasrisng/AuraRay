@@ -1,0 +1,13 @@
+{
+  "scene_name": "warm_studio_spheres",
+  "output_ppm": "renders/warm_studio_spheres.ppm",
+  "output_png": "renders/warm_studio_spheres.png",
+  "image_width": 400,
+  "image_height": 225,
+  "samples_per_pixel": 80,
+  "max_depth": 8,
+  "render_time_ms": 2981,
+  "sphere_count": 5,
+  "materials_used": ["lambertian", "metal"],
+  "camera_description": "Warm studio-style camera looking across a compact sphere arrangement."
+}

@@ -1,0 +1,13 @@
+{
+  "scene_name": "xr_lens_demo",
+  "output_ppm": "renders/xr_lens_demo.ppm",
+  "output_png": "renders/xr_lens_demo.png",
+  "image_width": 400,
+  "image_height": 225,
+  "samples_per_pixel": 80,
+  "max_depth": 8,
+  "render_time_ms": 3147,
+  "sphere_count": 7,
+  "materials_used": ["lambertian", "metal", "dielectric"],
+  "camera_description": "XR-inspired composition with a central refractive lens and small colored display-orb accents."
+}

@@ -105,6 +105,37 @@
 ### Next milestone
 - Add gaze-aware/foveated rendering.
 
+## Milestone 2: Pretty Scene Presets
+
+### What we built
+- Three named scene preset renders:
+  - `glass_orbs`
+  - `xr_lens_demo`
+  - `warm_studio_spheres`
+- PNG exports for all three presets.
+- JSON metadata files beside each preset render with render settings, timing, sphere count, materials, and camera notes.
+- A compact dielectric/glass material for the cool-toned orb and XR lens scenes.
+
+### Why we built it
+- The renderer already worked technically; this milestone makes the project look intentional and portfolio-ready.
+- Spheres are enough to create distinct moods when camera placement, color, material choices, and composition are deliberate.
+- Metadata makes each render more credible by documenting how it was generated.
+
+### Challenges
+- The code needed to stay simple instead of turning into a full scene system.
+- Glass/refraction had to remain small and stable, so it was limited to one compact dielectric material.
+- Previous proof renders needed to remain intact while adding new gallery-ready outputs.
+
+### What changed
+- Updated `src/main.cpp` with three explicit scene preset functions.
+- Added metadata writing with `std::chrono` render timing.
+- Updated `Makefile` so `make png` exports all preset PNGs.
+- Updated `README.md` with a Scene Presets gallery.
+- Added PPM, PNG, and JSON files for all three presets.
+
+### Next milestone
+- Add simulated gaze-aware/foveated rendering.
+
 ## Polish: PNG Export for Portfolio Use
 
 ### What we built
