@@ -253,6 +253,34 @@
 ### Next milestone
 - Polish the reusable components with an inspector-friendly API.
 
+## Phase 5: Reusable Unity Components
+
+### What we built
+- Inspector-friendly controls for the existing mode, gaze, overlay, and stats components.
+- Configurable foveal and transition radii, `64/24/8` sample tiers, overlay opacity, ring visibility, noise, dimming, movement speed, and starting mode.
+- Lightweight validation for gaze coordinates, radius ordering, sample counts, and visual strengths.
+- Concise public API documentation and expanded package setup guidance.
+
+### Why we built it
+- A reusable Unity package should be configurable through the Inspector instead of requiring source edits.
+- Clear component responsibilities make the simulator easier to understand and integrate.
+- Validation protects the demo from invalid settings without introducing a larger framework or custom editor.
+
+### Challenges
+- Existing Unity class names, script GUIDs, and serialized scene references needed to remain stable.
+- Configurable sample counts had to update both overlay behavior and stats calculations consistently.
+- Optional UI references needed to fail gracefully while preserving overlay and gaze behavior.
+
+### What changed
+- Polished the five existing runtime types in place without wrappers or renames.
+- Added tooltips, ranges, runtime guards, `OnValidate` checks, and focused XML API summaries.
+- Added explicit new defaults to both the live viewer scene and package sample.
+- Expanded the package README and root README with reusable component guidance.
+- Left the C++ renderer and package architecture unchanged.
+
+### Next milestone
+- Add CMake build support for the C++ renderer or prepare the `v0.1` release.
+
 ## Polish: PNG Export for Portfolio Use
 
 ### What we built

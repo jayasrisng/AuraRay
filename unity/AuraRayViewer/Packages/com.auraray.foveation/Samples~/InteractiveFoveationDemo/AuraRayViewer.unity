@@ -3121,6 +3121,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AuraRay.FoveationOverlayController
   fovealRadius: 0.18
   transitionRadius: 0.36
+  centerSamples: 64
+  middleSamples: 24
+  peripherySamples: 8
+  overlayOpacity: 1
+  showRings: 1
+  noiseStrength: 0.08
+  dimmingStrength: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

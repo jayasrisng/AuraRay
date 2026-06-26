@@ -70,6 +70,12 @@ AuraRay now includes a reusable Unity package at `unity/AuraRayViewer/Packages/c
 
 The current interactive simulator is preserved as the **Interactive Foveation Demo** sample. Import it from Unity Package Manager to inspect or run the complete setup. The C++ ray tracer remains separate as AuraRay's offline/reference renderer; this package does not introduce a native plugin or real-time C++ rendering.
 
+## Phase 5: Reusable Unity Components
+
+The Unity package now exposes inspector-friendly components for mode control, simulated gaze movement, foveation region visualization, sample budgets, and statistics. Useful parameters such as radii, `64/24/8` sample tiers, overlay opacity, ring visibility, noise, dimming, movement speed, and starting mode can be tuned without editing scripts.
+
+Validation keeps gaze coordinates, radii, opacity, and sample counts in usable ranges, while optional UI references can be omitted safely. Existing class names, script GUIDs, and the interactive sample scene remain compatible.
+
 ## Gallery
 
 | Milestone | Output |

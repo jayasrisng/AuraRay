@@ -2,14 +2,35 @@ using UnityEngine;
 
 namespace AuraRay
 {
+    /// <summary>Provides a normalized simulated gaze point and moves a visible target to match it.</summary>
     public class GazeTargetController : MonoBehaviour
     {
-        [SerializeField] private Transform gazeTarget;
-        [SerializeField] private Camera sceneCamera;
-        [SerializeField] private float moveSpeed = 0.42f;
-        [SerializeField] private Vector2 normalizedGaze = new Vector2(0.5f, 0.5f);
+        [SerializeField, Tooltip("Visible scene object moved to represent the current gaze point.")]
+        private Transform gazeTarget;
 
+        [SerializeField, Tooltip("Camera used to convert mouse clicks into normalized screen coordinates.")]
+        private Camera sceneCamera;
+
+        [SerializeField, Range(0.01f, 2.0f), Tooltip("Keyboard gaze movement speed in normalized units per second.")]
+        private float moveSpeed = 0.42f;
+
+        [SerializeField, Tooltip("Current gaze position in normalized screen coordinates.")]
+        private Vector2 normalizedGaze = new Vector2(0.5f, 0.5f);
+
+        /// <summary>Current gaze position with both axes clamped from zero to one.</summary>
         public Vector2 NormalizedGaze => normalizedGaze;
+
+        /// <summary>Visible transform controlled by this gaze provider.</summary>
+        public Transform GazeTarget => gazeTarget;
+
+        /// <summary>Keyboard movement speed in normalized units per second.</summary>
+        public float MoveSpeed => moveSpeed;
+
+        private void OnValidate()
+        {
+            moveSpeed = Mathf.Max(0.01f, moveSpeed);
+            normalizedGaze = ClampGaze(normalizedGaze);
+        }
 
         private void Update()
         {
@@ -22,22 +43,19 @@ namespace AuraRay
 
             if (delta.sqrMagnitude > 0.0f)
             {
-                normalizedGaze += delta.normalized * moveSpeed * Time.deltaTime;
-                normalizedGaze.x = Mathf.Clamp01(normalizedGaze.x);
-                normalizedGaze.y = Mathf.Clamp01(normalizedGaze.y);
+                normalizedGaze = ClampGaze(normalizedGaze + delta.normalized * moveSpeed * Time.deltaTime);
                 ApplyTargetPosition();
             }
 
-            if (Input.GetMouseButtonDown(0) && sceneCamera != null)
+            if (Input.GetMouseButtonDown(0) && sceneCamera != null && Screen.width > 0 && Screen.height > 0)
             {
                 Vector3 mouse = Input.mousePosition;
-                normalizedGaze = new Vector2(mouse.x / Screen.width, mouse.y / Screen.height);
-                normalizedGaze.x = Mathf.Clamp01(normalizedGaze.x);
-                normalizedGaze.y = Mathf.Clamp01(normalizedGaze.y);
+                normalizedGaze = ClampGaze(new Vector2(mouse.x / Screen.width, mouse.y / Screen.height));
                 ApplyTargetPosition();
             }
         }
 
+        /// <summary>Assigns the visible target and camera used by the simulated gaze provider.</summary>
         public void Configure(Transform target, Camera camera)
         {
             gazeTarget = target;
@@ -45,10 +63,16 @@ namespace AuraRay
             ApplyTargetPosition();
         }
 
+        /// <summary>Moves the simulated gaze to a normalized screen position.</summary>
         public void SetNormalizedGaze(Vector2 value)
         {
-            normalizedGaze = new Vector2(Mathf.Clamp01(value.x), Mathf.Clamp01(value.y));
+            normalizedGaze = ClampGaze(value);
             ApplyTargetPosition();
+        }
+
+        private static Vector2 ClampGaze(Vector2 value)
+        {
+            return new Vector2(Mathf.Clamp01(value.x), Mathf.Clamp01(value.y));
         }
 
         private void ApplyTargetPosition()

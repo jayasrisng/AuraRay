@@ -3,18 +3,24 @@ using UnityEngine.UI;
 
 namespace AuraRay
 {
+    /// <summary>Displays the current gaze, quality mode, sample tiers, and estimated ray budget.</summary>
     public class AuraRayStatsPanel : MonoBehaviour
     {
-        [SerializeField] private Text titleText;
-        [SerializeField] private Text bodyText;
+        [SerializeField, Tooltip("Optional heading for the statistics panel.")]
+        private Text titleText;
 
+        [SerializeField, Tooltip("Optional text element that receives formatted simulator statistics.")]
+        private Text bodyText;
+
+        /// <summary>Assigns optional UGUI text elements used by the panel.</summary>
         public void Configure(Text title, Text body)
         {
             titleText = title;
             bodyText = body;
         }
 
-        public void UpdateStats(FoveationMode mode, Vector2 gaze, int centerSamples, int middleSamples, int peripherySamples, long estimatedRays)
+        /// <summary>Refreshes the panel with current mode, gaze, and sample budget values.</summary>
+        public void UpdateStats(FoveationMode mode, Vector2 gaze, int centerSamples, int middleSamples, int peripherySamples, long estimatedRays, int fullQualitySamples = 64)
         {
             if (titleText != null)
             {
@@ -26,7 +32,7 @@ namespace AuraRay
                 return;
             }
 
-            const long fullQualityRays = 400L * 225L * 64L;
+            long fullQualityRays = 400L * 225L * Mathf.Max(1, fullQualitySamples);
             float percent = estimatedRays / (float)fullQualityRays * 100.0f;
 
             bodyText.text =
