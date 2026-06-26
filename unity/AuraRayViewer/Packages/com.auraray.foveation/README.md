@@ -13,6 +13,10 @@ This repository embeds the package at `unity/AuraRayViewer/Packages/com.auraray.
 
 To use the toolkit in another local Unity project, choose **Add package from disk** in Package Manager and select this package's `package.json` file.
 
+### Clean-install verification
+
+Version `0.1.0` was installed from its local `package.json` into a fresh Unity 6000.3.17f1 project. Unity resolved the declared UGUI dependency, compiled the runtime and editor assemblies, imported the sample through Package Manager, and opened the sample scene with zero missing scripts.
+
 ## Components
 
 - `GazeTargetController`: provides a clamped normalized gaze point and moves a visible target using keyboard or mouse input.

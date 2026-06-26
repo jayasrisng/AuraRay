@@ -281,6 +281,30 @@
 ### Next milestone
 - Add CMake build support for the C++ renderer or prepare the `v0.1` release.
 
+## AuraRay v0.1 Step 1: Clean Unity Package Install Verification
+
+### What we built
+- A disposable Unity 6000.3.17f1 consumer project under `/tmp` for package verification.
+- A temporary editor-only test harness that installed the local package, imported its declared sample, opened the scene, and checked its runtime components.
+
+### Why we built it
+- Testing only inside the AuraRay viewer project could hide undeclared dependencies or package-cache assumptions.
+- A fresh-project import proves the package works through the same local Unity Package Manager workflow another developer would use.
+
+### Challenges
+- Unity's package sample import is an editor API operation, so the temporary verifier ran it in a separate batchmode pass before scene validation.
+- The validation needed to distinguish package failures from test-harness compiler issues; no repository code was changed to accommodate the harness.
+
+### What changed
+- Verified `com.auraray.foveation@0.1.0` resolves as a local package with its declared `com.unity.ugui` dependency.
+- Verified both package assemblies compile in a fresh project.
+- Imported **Interactive Foveation Demo** into the standard `Assets/Samples` location.
+- Opened the imported scene with zero missing scripts and confirmed gaze movement, all four modes, stats wiring, and ray-budget estimation.
+- Added clean-install verification notes to both README files. No package implementation fix was required.
+
+### Next milestone
+- Prepare the `v0.1` release metadata and portfolio presentation, or add CMake build support separately.
+
 ## Polish: PNG Export for Portfolio Use
 
 ### What we built

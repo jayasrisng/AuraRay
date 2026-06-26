@@ -76,6 +76,10 @@ The Unity package now exposes inspector-friendly components for mode control, si
 
 Validation keeps gaze coordinates, radii, opacity, and sample counts in usable ranges, while optional UI references can be omitted safely. Existing class names, script GUIDs, and the interactive sample scene remain compatible.
 
+## v0.1 Clean-Install Verification
+
+The local package was installed into a fresh Unity 6000.3.17f1 project through Unity Package Manager. Its UGUI dependency and assemblies resolved successfully, and **Interactive Foveation Demo** imported and opened with all package components connected and zero missing scripts.
+
 ## Gallery
 
 | Milestone | Output |
