@@ -109,3 +109,10 @@ InitTestScene*.unity*
 build/
 *.dSYM/
 .DS_Store
+
+# Nested Unity projects
+**/[Ll]ibrary/
+**/[Tt]emp/
+**/[Oo]bj/
+**/[Ll]ogs/
+**/[Uu]ser[Ss]ettings/

@@ -165,6 +165,37 @@
 ### Next milestone
 - Build a Unity XR display viewer.
 
+## Milestone 4: Unity Aura Viewer
+
+### What we built
+- A Unity project at `unity/AuraRayViewer`.
+- An `AuraRayViewer` scene with a dark XR-inspired display surface.
+- A large render panel that shows the foveated PNG outputs from the C++ renderer.
+- Buttons and keyboard shortcuts for Full Quality, Low Quality, Gaze-Aware, and Overlay / Heatmap modes.
+- A metadata panel that updates with render mode, estimated rays, render time, samples, gaze point, and scene name.
+- A gaze marker and foveal ring overlay for the gaze-aware view.
+- A screenshot artifact at `docs/screenshots/unity_aura_viewer.png`.
+
+### Why we built it
+- AuraRay needs to feel like an XR product/demo, not only a command-line renderer.
+- Unity is a viewer here, which keeps the C++ renderer separate and avoids native plugin complexity.
+- Showing images and metadata together makes the foveated rendering tradeoff easier to understand.
+
+### Challenges
+- The Unity project needed to avoid committing generated `Library`, `Logs`, and user-specific files.
+- Unity's default project did not include UGUI, so the viewer explicitly adds Unity's `com.unity.ugui` package.
+- The gaze overlay needed to be visible in screenshots and play mode, so it is generated as a transparent overlay texture.
+
+### What changed
+- Added the Unity project scaffold under `unity/AuraRayViewer`.
+- Copied the foveated PNG and JSON outputs into Unity `Resources`.
+- Added small Unity scripts for metadata parsing, viewer control, and gaze overlay rendering.
+- Added an editor scene builder/smoke test helper.
+- Updated `.gitignore`, `README.md`, and this devlog.
+
+### Next milestone
+- Package/polish the demo or add interactive gaze control.
+
 ## Polish: PNG Export for Portfolio Use
 
 ### What we built

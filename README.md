@@ -48,6 +48,14 @@ Full quality uses many rays everywhere. Low quality uses fewer rays everywhere. 
 | --- | --- | --- | --- |
 | ![foveated_full](renders/foveated_full.png) | ![foveated_low](renders/foveated_low.png) | ![foveated_gaze](renders/foveated_gaze.png) | ![foveated_overlay](renders/foveated_overlay.png) |
 
+## Milestone 4: Unity Aura Viewer
+
+The C++ renderer generates PNG images and JSON metadata. The Unity viewer loads those exported files and presents them in an XR-inspired floating display so the full, low, gaze-aware, and overlay modes can be compared interactively.
+
+Open the Unity project at `unity/AuraRayViewer`, then open the `AuraRayViewer` scene. Use the buttons or keys `1`-`4` to switch modes.
+
+![Unity Aura Viewer](docs/screenshots/unity_aura_viewer.png)
+
 ## Gallery
 
 | Milestone | Output |
@@ -63,3 +71,4 @@ Full quality uses many rays everywhere. Low quality uses fewer rays everywhere. 
 | Foveated low quality | `renders/foveated_low.png` |
 | Foveated gaze-aware | `renders/foveated_gaze.png` |
 | Foveated overlay | `renders/foveated_overlay.png` |
+| Unity Aura Viewer | `docs/screenshots/unity_aura_viewer.png` |
