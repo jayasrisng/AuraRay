@@ -2,6 +2,11 @@
 #include <fstream>
 #include <iostream>
 #include <cmath>
+#include <random>
+
+constexpr int image_width = 400;
+constexpr double aspect_ratio = 16.0 / 9.0;
+constexpr int samples_per_pixel = 25;
 
 class vec3 {
   public:
@@ -87,10 +92,17 @@ class ray {
     vec3 direction_;
 };
 
-void write_color(std::ostream& out, const color& pixel_color) {
-    const int red = static_cast<int>(255.999 * pixel_color.x());
-    const int green = static_cast<int>(255.999 * pixel_color.y());
-    const int blue = static_cast<int>(255.999 * pixel_color.z());
+double random_double(std::mt19937& rng) {
+    static std::uniform_real_distribution<double> distribution(0.0, 1.0);
+    return distribution(rng);
+}
+
+void write_color(std::ostream& out, const color& pixel_color,
+                 int samples = 1) {
+    const double scale = 1.0 / samples;
+    const int red = static_cast<int>(255.999 * scale * pixel_color.x());
+    const int green = static_cast<int>(255.999 * scale * pixel_color.y());
+    const int blue = static_cast<int>(255.999 * scale * pixel_color.z());
 
     out << red << ' ' << green << ' ' << blue << '\n';
 }
@@ -134,7 +146,6 @@ bool open_ppm(const std::filesystem::path& output_path, int image_width,
 }
 
 bool render_first_image(const std::filesystem::path& output_path) {
-    const int image_width = 400;
     const int image_height = 225;
 
     std::ofstream out;
@@ -157,8 +168,6 @@ bool render_first_image(const std::filesystem::path& output_path) {
 }
 
 bool render_first_sphere(const std::filesystem::path& output_path) {
-    const double aspect_ratio = 16.0 / 9.0;
-    const int image_width = 400;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
 
     const double viewport_height = 2.0;
@@ -193,6 +202,54 @@ bool render_first_sphere(const std::filesystem::path& output_path) {
     return true;
 }
 
+bool render_antialias_sphere(const std::filesystem::path& output_path) {
+    const int image_height = static_cast<int>(image_width / aspect_ratio);
+
+    const double viewport_height = 2.0;
+    const double viewport_width = aspect_ratio * viewport_height;
+    const double focal_length = 1.0;
+
+    const point3 camera_origin(0, 0, 0);
+    const vec3 horizontal(viewport_width, 0, 0);
+    const vec3 vertical(0, viewport_height, 0);
+    const point3 lower_left_corner =
+        camera_origin - horizontal / 2 - vertical / 2 - vec3(0, 0, focal_length);
+
+    std::ofstream out;
+    if (!open_ppm(output_path, image_width, image_height, out)) {
+        return false;
+    }
+
+    std::mt19937 rng(1337);
+
+    for (int y = image_height - 1; y >= 0; --y) {
+        for (int x = 0; x < image_width; ++x) {
+            color pixel_color(0, 0, 0);
+
+            for (int sample = 0; sample < samples_per_pixel; ++sample) {
+                const double u =
+                    (static_cast<double>(x) + random_double(rng)) /
+                    (image_width - 1);
+                const double v =
+                    (static_cast<double>(y) + random_double(rng)) /
+                    (image_height - 1);
+                const ray r(camera_origin,
+                            lower_left_corner + u * horizontal + v * vertical -
+                                camera_origin);
+
+                pixel_color += ray_color(r);
+            }
+
+            write_color(out, pixel_color, samples_per_pixel);
+        }
+    }
+
+    std::cout << "Rendered " << output_path << " (" << image_width << "x"
+              << image_height << ", " << samples_per_pixel
+              << " samples per pixel)\n";
+    return true;
+}
+
 int main() {
     const std::filesystem::path output_dir = "renders";
     std::filesystem::create_directories(output_dir);
@@ -202,6 +259,10 @@ int main() {
     }
 
     if (!render_first_sphere(output_dir / "first_sphere.ppm")) {
+        return 1;
+    }
+
+    if (!render_antialias_sphere(output_dir / "antialias_sphere.ppm")) {
         return 1;
     }
 

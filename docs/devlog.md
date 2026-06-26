@@ -50,6 +50,32 @@
 ### Next milestone
 - Add simple materials and lighting only after the one-sphere ray pipeline is committed and understood.
 
+## Milestone 3: Anti-Aliased Sphere Edges
+
+### What we built
+- A new anti-aliased sphere render at `renders/antialias_sphere.ppm`.
+- A PNG export at `renders/antialias_sphere.png`.
+- Configurable `samples_per_pixel` near the top of `src/main.cpp`.
+- Random jitter inside each pixel so each final pixel averages multiple nearby camera rays.
+
+### Why we built it
+- Anti-aliasing makes the sphere edge look smoother and more portfolio-ready without changing the scene itself.
+- This teaches the next core ray tracing concept: one pixel can represent an average of multiple samples, not just one ray.
+- We kept materials, reflections, and lighting out so the milestone stays focused on sampling.
+
+### Challenges
+- Random sampling can make committed images change every run, so the renderer uses a fixed RNG seed for reproducible output.
+- The renderer still writes PPM as the raw output and uses `sips` only for PNG export.
+
+### What changed
+- Updated `src/main.cpp` with jittered multi-sample rendering for the sphere.
+- Updated `Makefile` so `make png` exports the anti-aliased render.
+- Updated `README.md` with the new output and a small gallery table.
+- Added `renders/antialias_sphere.ppm` and `renders/antialias_sphere.png`.
+
+### Next milestone
+- Consider simple diffuse materials only after comparing the jagged and anti-aliased sphere renders.
+
 ## Polish: PNG Export for Portfolio Use
 
 ### What we built
