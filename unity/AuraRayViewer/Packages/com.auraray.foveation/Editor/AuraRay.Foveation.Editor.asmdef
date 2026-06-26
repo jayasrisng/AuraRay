@@ -1,0 +1,11 @@
+{
+  "name": "AuraRay.Foveation.Editor",
+  "rootNamespace": "AuraRayEditor",
+  "references": [
+    "AuraRay.Foveation",
+    "Unity.ugui"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ]
+}

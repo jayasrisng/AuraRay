@@ -225,6 +225,34 @@
 ### Next milestone
 - Polish the Unity package into a reusable foveation demo component.
 
+## Phase 4: Unity Package
+
+### What we built
+- An embedded Unity package at `unity/AuraRayViewer/Packages/com.auraray.foveation`.
+- Separate runtime and editor assemblies for the reusable simulator components and scene-building tools.
+- An importable `Interactive Foveation Demo` sample containing the working simulator scene.
+- Package documentation covering installation, components, controls, limitations, and future direction.
+
+### Why we built it
+- Packaging turns the simulator from project-specific code into a reusable Unity toolkit.
+- A sample scene demonstrates the intended wiring without forcing consumers to copy the original project structure.
+- The package boundary keeps the Unity simulator independent from the C++ offline/reference renderer.
+
+### Challenges
+- Unity scenes reference scripts by GUID, so the runtime scripts and their `.meta` files had to move together.
+- The sample scene needed its own asset GUID so importing it would not conflict with the working scene retained in the viewer project.
+- The package needed an explicit UGUI dependency and assembly references while staying free of OpenXR, native plugins, and external assets.
+
+### What changed
+- Moved the five interactive runtime scripts into the package `Runtime` folder.
+- Moved `AuraRaySceneBuilder` into the package `Editor` folder.
+- Added `package.json`, assembly definitions, package documentation, and the simulator sample scene.
+- Extended Unity cache ignore rules for nested memory captures and recordings.
+- Left the C++ renderer and its build flow unchanged.
+
+### Next milestone
+- Polish the reusable components with an inspector-friendly API.
+
 ## Polish: PNG Export for Portfolio Use
 
 ### What we built

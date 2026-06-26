@@ -1,5 +1,13 @@
 {
   "dependencies": {
+    "com.auraray.foveation": {
+      "version": "file:com.auraray.foveation",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.ugui": "2.0.0"
+      }
+    },
     "com.unity.multiplayer.center": {
       "version": "1.0.1",
       "depth": 0,

@@ -64,6 +64,12 @@ Open `unity/AuraRayViewer`, run the `AuraRayViewer` scene, and move the gaze tar
 
 ![Interactive Unity Foveation Simulator](docs/screenshots/unity_interactive_foveation.png)
 
+## Phase 4: Unity Package
+
+AuraRay now includes a reusable Unity package at `unity/AuraRayViewer/Packages/com.auraray.foveation`. The package provides components for gaze target movement, foveation overlay rendering, quality mode switching, and stats visualization.
+
+The current interactive simulator is preserved as the **Interactive Foveation Demo** sample. Import it from Unity Package Manager to inspect or run the complete setup. The C++ ray tracer remains separate as AuraRay's offline/reference renderer; this package does not introduce a native plugin or real-time C++ rendering.
+
 ## Gallery
 
 | Milestone | Output |

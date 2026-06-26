@@ -116,3 +116,7 @@ build/
 **/[Oo]bj/
 **/[Ll]ogs/
 **/[Uu]ser[Ss]ettings/
+**/[Mm]emoryCaptures/
+**/[Rr]ecordings/
+
+# Embedded packages under Packages/ are source and must remain tracked.

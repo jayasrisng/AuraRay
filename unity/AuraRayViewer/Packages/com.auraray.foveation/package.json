@@ -1,0 +1,21 @@
+{
+  "name": "com.auraray.foveation",
+  "displayName": "AuraRay Foveation Toolkit",
+  "version": "0.1.0",
+  "unity": "6000.3",
+  "unityRelease": "17f1",
+  "description": "XR-focused Unity package for simulating gaze-aware foveated rendering and visualizing foveation regions in Unity.",
+  "author": {
+    "name": "Jayasri Sai Nikitha Guthula"
+  },
+  "dependencies": {
+    "com.unity.ugui": "2.0.0"
+  },
+  "samples": [
+    {
+      "displayName": "Interactive Foveation Demo",
+      "description": "A sphere-based demo scene with movable gaze and four foveation visualization modes.",
+      "path": "Samples~/InteractiveFoveationDemo"
+    }
+  ]
+}
