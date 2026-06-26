@@ -2,15 +2,17 @@
 
 AuraRay is a compact XR rendering study that combines a C++17 offline ray tracer with a reusable Unity foveation toolkit. It is designed for graphics and XR learners, recruiters evaluating rendering work, and developers exploring gaze-aware quality allocation. The project demonstrates deterministic ray tracing, render metadata, simulated foveated sampling, and an interactive gaze-controlled visualization relevant to XR prototyping, optics demos, rendering-budget education, and future eye-tracking experiments.
 
-![Interactive AuraRay Unity foveation simulator](docs/screenshots/unity_interactive_foveation.png)
+![AuraRay interactive gaze-aware foveation simulator](docs/media/auraray_hero.png)
 
 ## Quick Demo
 
-The C++ renderer compares full, low, and gaze-aware sampling on the same scene. The Unity sample turns the same concept into an interactive simulator with a movable gaze target and live quality-region overlay.
+The Unity sample turns gaze-aware quality allocation into an interactive simulator with a moving target, live statistics, and four visualization modes.
 
-| Full quality | Low quality | Gaze-aware | Region overlay |
-| --- | --- | --- | --- |
-| ![Full quality render](renders/foveated_full.png) | ![Low quality render](renders/foveated_low.png) | ![Gaze-aware render](renders/foveated_gaze.png) | ![Foveation region overlay](renders/foveated_overlay.png) |
+![AuraRay animated foveation demo](docs/media/auraray_demo.gif)
+
+The offline C++ renderer compares full, low, and gaze-aware sampling on the same scene using deterministic output.
+
+![AuraRay foveated rendering comparison](docs/media/foveated_comparison.png)
 
 ## What Is Included
 
@@ -119,7 +121,6 @@ The CMake target includes MSVC-compatible warning flags, but Windows and Linux b
 
 ### v0.1.0 release
 
-- Capture a short interactive demo video or GIF.
 - Create and publish the `v0.1.0` GitHub tag and release.
 
 ### Future updates

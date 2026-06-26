@@ -1,11 +1,17 @@
 CXX := c++
 CXXFLAGS := -std=c++17 -Wall -Wextra -pedantic -O2
 CMAKE ?= cmake
+SWIFT ?= /usr/bin/swift
+UNITY ?= /Applications/Unity/Hub/Editor/6000.3.17f1/Unity.app/Contents/MacOS/Unity
 
 BUILD_DIR := build
 TARGET := $(BUILD_DIR)/auraray
 CMAKE_BUILD_DIR := $(BUILD_DIR)/cmake
 CMAKE_BUILD_TYPE ?= Release
+UNITY_PROJECT := $(CURDIR)/unity/AuraRayViewer
+DEMO_FRAME_DIR ?= /tmp/AuraRayDemoFrames
+MEDIA_DIR := docs/media
+SWIFT_CACHE_DIR ?= /tmp/auraray-swift-cache
 SRC := src/main.cpp
 FIRST_IMAGE_PPM := renders/first_image.ppm
 FIRST_IMAGE_PNG := renders/first_image.png
@@ -30,7 +36,7 @@ FOVEATED_GAZE_PNG := renders/foveated_gaze.png
 FOVEATED_OVERLAY_PPM := renders/foveated_overlay.ppm
 FOVEATED_OVERLAY_PNG := renders/foveated_overlay.png
 
-.PHONY: all run png export cmake-configure cmake-build cmake-run clean
+.PHONY: all run png export cmake-configure cmake-build cmake-run comparison-image demo-frames demo-media clean
 
 all: $(TARGET)
 
@@ -62,6 +68,16 @@ cmake-build: cmake-configure
 
 cmake-run: cmake-build
 	./$(CMAKE_BUILD_DIR)/auraray
+
+comparison-image:
+	mkdir -p $(MEDIA_DIR) $(SWIFT_CACHE_DIR)
+	CLANG_MODULE_CACHE_PATH=$(SWIFT_CACHE_DIR) SWIFT_MODULECACHE_PATH=$(SWIFT_CACHE_DIR) $(SWIFT) scripts/generate_demo_media.swift comparison $(CURDIR) $(CURDIR)/$(MEDIA_DIR)/foveated_comparison.png
+
+demo-frames:
+	AURARAY_DEMO_FRAME_DIR=$(DEMO_FRAME_DIR) "$(UNITY)" -batchmode -quit -projectPath "$(UNITY_PROJECT)" -executeMethod AuraRayEditor.AuraRayDemoCapture.Capture -logFile /tmp/auraray_demo_capture.log
+
+demo-media: comparison-image demo-frames
+	CLANG_MODULE_CACHE_PATH=$(SWIFT_CACHE_DIR) SWIFT_MODULECACHE_PATH=$(SWIFT_CACHE_DIR) $(SWIFT) scripts/generate_demo_media.swift gif $(DEMO_FRAME_DIR) $(CURDIR)/$(MEDIA_DIR)/auraray_demo.gif
 
 clean:
 	rm -rf $(BUILD_DIR)

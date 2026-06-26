@@ -358,6 +358,34 @@
 ### Next milestone
 - Capture final demo media and create the `v0.1.0` tag and GitHub release.
 
+## v0.1.0 Demo Media
+
+### What we built
+- A deterministic Unity editor capture that generates a release hero and 60 simulator frames.
+- An animated GIF showing Full Quality, Low Quality, moving Gaze-Aware, and Overlay modes.
+- A labeled comparison image composed from the four existing C++ foveated outputs.
+- Reproducible `make demo-media` and `make comparison-image` workflows.
+
+### Why we built it
+- A public repository needs to communicate the interactive XR concept before a reader opens Unity.
+- Reproducible media prevents release screenshots from drifting away from the committed scene and renderer outputs.
+- One labeled comparison makes the C++ sampling tradeoff easier to understand than four independent thumbnails.
+
+### Challenges
+- `ffmpeg`, ImageMagick, and Pillow were unavailable, so the final PNG and GIF composition uses built-in macOS Swift, AppKit, and ImageIO.
+- Unity uses a per-user temporary path by default, so the Makefile passes an explicit frame directory shared with the encoder.
+- Temporary frames needed enough resolution for readable UI without adding dozens of large files to Git.
+
+### What changed
+- Added `AuraRayDemoCapture` as project-level editor tooling without modifying the package runtime.
+- Added `scripts/generate_demo_media.swift` and documented manual video capture steps.
+- Added the hero, animated GIF, and foveated comparison under `docs/media/`.
+- Updated the root README to feature the final release media.
+- Kept the 60 generated frame PNGs under `/tmp` and out of the repository.
+
+### Next milestone
+- Run the final clean clone test and create the `v0.1.0` tag and GitHub release.
+
 ## Polish: PNG Export for Portfolio Use
 
 ### What we built
