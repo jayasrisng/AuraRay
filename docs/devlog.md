@@ -305,6 +305,31 @@
 ### Next milestone
 - Prepare the `v0.1` release metadata and portfolio presentation, or add CMake build support separately.
 
+## CMake Build Support
+
+### What we built
+- A root-level CMake project that builds the existing renderer as the `auraray` executable.
+- Optional Makefile wrappers for CMake configure, build, and run commands.
+- Ignore rules for CMake-generated files outside the standard build directory.
+
+### Why CMake was added now
+- The Unity package is independently verified, so renderer build portability can improve without mixing Unity and native-plugin work.
+- CMake makes the renderer easier to build on macOS, Linux, and Windows while preserving the lightweight Makefile workflow.
+
+### Challenges
+- The CMake target needed to match the established C++17 requirement and warning level without changing renderer behavior.
+- The executable must run from the repository root because render output paths are intentionally relative to `renders/`.
+- CMake artifacts needed to remain isolated under `build/` and out of version control.
+
+### What changed
+- Added `CMakeLists.txt` using C++17 and platform-appropriate warning flags.
+- Added `cmake-configure`, `cmake-build`, and `cmake-run` Makefile targets.
+- Updated `.gitignore` and `README.md` with the portable build workflow.
+- Left `src/main.cpp`, the existing Makefile targets, Unity package, and previous renders unchanged.
+
+### Next milestone
+- Prepare the AuraRay `v0.1` release polish.
+
 ## Polish: PNG Export for Portfolio Use
 
 ### What we built

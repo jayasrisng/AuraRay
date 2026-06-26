@@ -7,6 +7,18 @@ A minimal C++ ray tracer exploring gaze-aware rendering for XR.
 make run
 ```
 
+## CMake Build
+
+CMake provides a portable build path while the existing Makefile remains available for convenience. CMake 3.20 or newer and a C++17 compiler are required.
+
+```bash
+cmake -S . -B build/cmake -DCMAKE_BUILD_TYPE=Release
+cmake --build build/cmake
+./build/cmake/auraray
+```
+
+The same workflow is available through `make cmake-configure`, `make cmake-build`, and `make cmake-run`. Run the executable from the repository root so relative render outputs are written to `renders/`.
+
 ## Export portfolio-friendly images
 
 ```bash

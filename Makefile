@@ -1,8 +1,11 @@
 CXX := c++
 CXXFLAGS := -std=c++17 -Wall -Wextra -pedantic -O2
+CMAKE ?= cmake
 
 BUILD_DIR := build
 TARGET := $(BUILD_DIR)/auraray
+CMAKE_BUILD_DIR := $(BUILD_DIR)/cmake
+CMAKE_BUILD_TYPE ?= Release
 SRC := src/main.cpp
 FIRST_IMAGE_PPM := renders/first_image.ppm
 FIRST_IMAGE_PNG := renders/first_image.png
@@ -27,7 +30,7 @@ FOVEATED_GAZE_PNG := renders/foveated_gaze.png
 FOVEATED_OVERLAY_PPM := renders/foveated_overlay.ppm
 FOVEATED_OVERLAY_PNG := renders/foveated_overlay.png
 
-.PHONY: all run png export clean
+.PHONY: all run png export cmake-configure cmake-build cmake-run clean
 
 all: $(TARGET)
 
@@ -50,6 +53,15 @@ png export: run
 	sips -s format png $(FOVEATED_LOW_PPM) --out $(FOVEATED_LOW_PNG)
 	sips -s format png $(FOVEATED_GAZE_PPM) --out $(FOVEATED_GAZE_PNG)
 	sips -s format png $(FOVEATED_OVERLAY_PPM) --out $(FOVEATED_OVERLAY_PNG)
+
+cmake-configure:
+	$(CMAKE) -S . -B $(CMAKE_BUILD_DIR) -DCMAKE_BUILD_TYPE=$(CMAKE_BUILD_TYPE)
+
+cmake-build: cmake-configure
+	$(CMAKE) --build $(CMAKE_BUILD_DIR) --config $(CMAKE_BUILD_TYPE)
+
+cmake-run: cmake-build
+	./$(CMAKE_BUILD_DIR)/auraray
 
 clean:
 	rm -rf $(BUILD_DIR)
