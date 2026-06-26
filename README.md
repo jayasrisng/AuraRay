@@ -1,15 +1,65 @@
 # AuraRay
-A minimal C++ ray tracer exploring gaze-aware rendering for XR.
 
-## Build
+AuraRay is a compact XR rendering study that combines a C++17 offline ray tracer with a reusable Unity foveation toolkit. It is designed for graphics and XR learners, recruiters evaluating rendering work, and developers exploring gaze-aware quality allocation. The project demonstrates deterministic ray tracing, render metadata, simulated foveated sampling, and an interactive gaze-controlled visualization relevant to XR prototyping, optics demos, rendering-budget education, and future eye-tracking experiments.
+
+![Interactive AuraRay Unity foveation simulator](docs/screenshots/unity_interactive_foveation.png)
+
+## Quick Demo
+
+The C++ renderer compares full, low, and gaze-aware sampling on the same scene. The Unity sample turns the same concept into an interactive simulator with a movable gaze target and live quality-region overlay.
+
+| Full quality | Low quality | Gaze-aware | Region overlay |
+| --- | --- | --- | --- |
+| ![Full quality render](renders/foveated_full.png) | ![Low quality render](renders/foveated_low.png) | ![Gaze-aware render](renders/foveated_gaze.png) | ![Foveation region overlay](renders/foveated_overlay.png) |
+
+## What Is Included
+
+- A dependency-free C++17 sphere ray tracer with camera rays and anti-aliasing.
+- Lambertian, metal, and dielectric materials with deterministic scene presets.
+- PPM reference output, PNG portfolio export, and JSON render metadata.
+- Full-quality, low-quality, gaze-aware, and overlay render modes.
+- A reusable Unity package with configurable gaze, foveation regions, modes, and statistics.
+- An importable Unity sample using only built-in primitives and UGUI.
+- Makefile and CMake build workflows.
+
+## Architecture
+
+```text
+C++ offline renderer
+        |
+        v
+PPM / PNG / JSON outputs
+        |
+        v
+Unity package: com.auraray.foveation
+        |
+        v
+Interactive foveation simulator
+```
+
+The C++ renderer remains an offline reference implementation. Unity consumes the concepts and reference artifacts but does not call native C++ code. See [docs/architecture.md](docs/architecture.md) for component responsibilities.
+
+## C++ Quick Start
+
+### Makefile
+
+Requirements: a C++17 compiler and Make.
 
 ```bash
 make run
 ```
 
-## CMake Build
+On macOS, export all tracked portfolio PNGs with:
 
-CMake provides a portable build path while the existing Makefile remains available for convenience. CMake 3.20 or newer and a C++17 compiler are required.
+```bash
+make png
+```
+
+PNG conversion uses the built-in macOS `sips` tool. The renderer itself always writes portable PPM output and does not depend on `sips`.
+
+### CMake
+
+Requirements: CMake 3.20 or newer and a C++17 compiler.
 
 ```bash
 cmake -S . -B build/cmake -DCMAKE_BUILD_TYPE=Release
@@ -17,95 +67,75 @@ cmake --build build/cmake
 ./build/cmake/auraray
 ```
 
-The same workflow is available through `make cmake-configure`, `make cmake-build`, and `make cmake-run`. Run the executable from the repository root so relative render outputs are written to `renders/`.
+Equivalent convenience targets are available through `make cmake-configure`, `make cmake-build`, and `make cmake-run`. Run the executable from the repository root so it writes to `renders/`.
 
-## Export portfolio-friendly images
+## Unity Package Quick Start
 
-```bash
-make png
-```
+The embedded package is located at `unity/AuraRayViewer/Packages/com.auraray.foveation`.
 
-Current outputs:
-- `renders/first_image.ppm` / `renders/first_image.png`
-- `renders/first_sphere.ppm` / `renders/first_sphere.png`
-- `renders/antialias_sphere.ppm` / `renders/antialias_sphere.png`
-- `renders/minimal_raytracer.ppm` / `renders/minimal_raytracer.png`
-- `renders/glass_orbs.ppm` / `renders/glass_orbs.png`
-- `renders/xr_lens_demo.ppm` / `renders/xr_lens_demo.png`
-- `renders/warm_studio_spheres.ppm` / `renders/warm_studio_spheres.png`
-- `renders/foveated_full.ppm` / `renders/foveated_full.png`
-- `renders/foveated_low.ppm` / `renders/foveated_low.png`
-- `renders/foveated_gaze.ppm` / `renders/foveated_gaze.png`
-- `renders/foveated_overlay.ppm` / `renders/foveated_overlay.png`
+1. Open `unity/AuraRayViewer` in Unity 6000.3.17f1 or newer.
+2. Open **Window > Package Management > Package Manager**.
+3. Select **AuraRay Foveation Toolkit**.
+4. Import **Interactive Foveation Demo**.
+5. Open the imported `AuraRayViewer.unity` scene and enter Play Mode.
 
-## Milestone 1: Minimal Ray Tracer
+To install it in another local Unity project, choose **Add package from disk** and select `unity/AuraRayViewer/Packages/com.auraray.foveation/package.json`.
 
-AuraRay now renders a small Ray Tracing in One Weekend-style scene with camera rays, anti-aliasing, diffuse materials, metal materials, and multiple spheres over a ground sphere.
+### Controls
 
-![Minimal ray tracer scene](renders/minimal_raytracer.png)
+- Move gaze: `WASD` or arrow keys
+- Place gaze: left mouse click
+- Change mode: `1` through `4`, or the on-screen buttons
 
-## Scene Presets
+The package was clean-installed into a fresh Unity 6000.3.17f1 project. Its UGUI dependency and assemblies resolved, and the sample imported and opened with zero missing scripts.
 
-These are intentionally composed sphere-only scenes that make AuraRay visually distinct from the tutorial baseline while keeping the renderer small.
+## Scene Gallery
 
-| glass_orbs | xr_lens_demo | warm_studio_spheres |
-| --- | --- | --- |
-| ![glass_orbs](renders/glass_orbs.png) | ![xr_lens_demo](renders/xr_lens_demo.png) | ![warm_studio_spheres](renders/warm_studio_spheres.png) |
+These sphere-only scenes keep the implementation focused while giving AuraRay a visual identity beyond the tutorial baseline.
 
-## Milestone 3: Simulated Foveated Rendering
-
-Full quality uses many rays everywhere. Low quality uses fewer rays everywhere. Gaze-aware rendering spends more rays near a simulated gaze point and fewer rays in the periphery, inspired by XR systems where the user mostly notices detail near where they are looking.
-
-| full quality | low quality | gaze-aware | gaze overlay |
+| Minimal ray tracer | XR lens demo | Glass orbs | Warm studio |
 | --- | --- | --- | --- |
-| ![foveated_full](renders/foveated_full.png) | ![foveated_low](renders/foveated_low.png) | ![foveated_gaze](renders/foveated_gaze.png) | ![foveated_overlay](renders/foveated_overlay.png) |
+| ![Minimal ray tracer](renders/minimal_raytracer.png) | ![XR lens demo](renders/xr_lens_demo.png) | ![Glass orbs](renders/glass_orbs.png) | ![Warm studio spheres](renders/warm_studio_spheres.png) |
 
-## Milestone 4: Unity Aura Viewer
+## Tested Platform
 
-The C++ renderer generates PNG images and JSON metadata. The Unity viewer loads those exported files and presents them in an XR-inspired floating display so the full, low, gaze-aware, and overlay modes can be compared interactively.
+- macOS on Apple silicon
+- Apple Clang 17 with C++17
+- CMake 4.3.4 using a project minimum of 3.20
+- Unity 6000.3.17f1
+- Unity package clean-install test in a fresh project
 
-Open the Unity project at `unity/AuraRayViewer`, then open the `AuraRayViewer` scene. Use the buttons or keys `1`-`4` to switch modes.
+The CMake target includes MSVC-compatible warning flags, but Windows and Linux builds have not yet been verified for `v0.1.0`.
 
-![Unity Aura Viewer](docs/screenshots/unity_aura_viewer.png)
+## Current Limitations
 
-## Interactive Unity Foveation Simulator
+- Foveation is simulated; it does not reduce Unity rendering workload.
+- Gaze is controlled by keyboard or mouse, not real eye-tracking hardware.
+- The C++ renderer is offline and is not connected to Unity through a native plugin.
+- Geometry is intentionally limited to spheres, and there is no BVH or texture system.
+- `make png` uses macOS `sips`; other platforms can view PPM files or use their preferred image converter.
 
-The C++ renderer remains the offline/reference renderer. The Unity scene now simulates how an XR system could move the high-quality region based on gaze, using a movable `EyeTarget` instead of real eye tracking. This prepares AuraRay for future real eye-tracking or native-plugin integration without coupling Unity to the C++ renderer yet.
+## Roadmap
 
-Open `unity/AuraRayViewer`, run the `AuraRayViewer` scene, and move the gaze target with `WASD` or arrow keys. Use `1`-`4` or the on-screen buttons to switch between Full Quality, Low Quality, Gaze-Aware, and Overlay modes.
+### v0.1.0 release
 
-![Interactive Unity Foveation Simulator](docs/screenshots/unity_interactive_foveation.png)
+- Capture a short interactive demo video or GIF.
+- Create and publish the `v0.1.0` GitHub tag and release.
 
-## Phase 4: Unity Package
+### Future updates
 
-AuraRay now includes a reusable Unity package at `unity/AuraRayViewer/Packages/com.auraray.foveation`. The package provides components for gaze target movement, foveation overlay rendering, quality mode switching, and stats visualization.
+- Add focused Unity EditMode tests and lightweight CI.
+- Consider a replaceable gaze-provider interface when a second input source exists.
+- Explore optional OpenXR eye-gaze input.
+- Evaluate native C++ integration only after the offline and Unity APIs are stable.
 
-The current interactive simulator is preserved as the **Interactive Foveation Demo** sample. Import it from Unity Package Manager to inspect or run the complete setup. The C++ ray tracer remains separate as AuraRay's offline/reference renderer; this package does not introduce a native plugin or real-time C++ rendering.
+## Documentation
 
-## Phase 5: Reusable Unity Components
+- [Architecture](docs/architecture.md)
+- [Development log](docs/devlog.md)
+- [Unity package README](unity/AuraRayViewer/Packages/com.auraray.foveation/README.md)
+- [Changelog](CHANGELOG.md)
 
-The Unity package now exposes inspector-friendly components for mode control, simulated gaze movement, foveation region visualization, sample budgets, and statistics. Useful parameters such as radii, `64/24/8` sample tiers, overlay opacity, ring visibility, noise, dimming, movement speed, and starting mode can be tuned without editing scripts.
+## License
 
-Validation keeps gaze coordinates, radii, opacity, and sample counts in usable ranges, while optional UI references can be omitted safely. Existing class names, script GUIDs, and the interactive sample scene remain compatible.
-
-## v0.1 Clean-Install Verification
-
-The local package was installed into a fresh Unity 6000.3.17f1 project through Unity Package Manager. Its UGUI dependency and assemblies resolved successfully, and **Interactive Foveation Demo** imported and opened with all package components connected and zero missing scripts.
-
-## Gallery
-
-| Milestone | Output |
-| --- | --- |
-| First image pipeline | `renders/first_image.png` |
-| First camera-ray sphere | `renders/first_sphere.png` |
-| Anti-aliased sphere | `renders/antialias_sphere.png` |
-| Minimal ray tracer scene | `renders/minimal_raytracer.png` |
-| Pretty scene preset: glass_orbs | `renders/glass_orbs.png` |
-| Pretty scene preset: xr_lens_demo | `renders/xr_lens_demo.png` |
-| Pretty scene preset: warm_studio_spheres | `renders/warm_studio_spheres.png` |
-| Foveated full quality | `renders/foveated_full.png` |
-| Foveated low quality | `renders/foveated_low.png` |
-| Foveated gaze-aware | `renders/foveated_gaze.png` |
-| Foveated overlay | `renders/foveated_overlay.png` |
-| Unity Aura Viewer | `docs/screenshots/unity_aura_viewer.png` |
-| Interactive Unity Foveation Simulator | `docs/screenshots/unity_interactive_foveation.png` |
+AuraRay is available under the [MIT License](LICENSE).

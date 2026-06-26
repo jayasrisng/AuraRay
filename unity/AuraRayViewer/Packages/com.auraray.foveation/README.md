@@ -55,6 +55,11 @@ The **Interactive Foveation Demo** includes all four modes, a movable gaze targe
 
 ## Roadmap
 
-- Add focused EditMode tests and release metadata for `v0.1.0`.
+- Publish the `v0.1.0` tag with final demo media.
+- Add focused EditMode tests for gaze clamping and sample-budget validation.
 - Consider a replaceable gaze-provider interface after a concrete second input source exists.
 - Later phases may add optional OpenXR eye-gaze input and native C++ renderer integration.
+
+## License
+
+AuraRay Foveation Toolkit is available under the [MIT License](https://github.com/jayasrisng/AuraRay/blob/main/LICENSE).

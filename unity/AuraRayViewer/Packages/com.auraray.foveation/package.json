@@ -5,6 +5,21 @@
   "unity": "6000.3",
   "unityRelease": "17f1",
   "description": "XR-focused Unity package for simulating gaze-aware foveated rendering and visualizing foveation regions in Unity.",
+  "keywords": [
+    "xr",
+    "foveated-rendering",
+    "gaze",
+    "visualization",
+    "simulation"
+  ],
+  "license": "MIT",
+  "licensesUrl": "https://github.com/jayasrisng/AuraRay/blob/main/LICENSE",
+  "changelogUrl": "https://github.com/jayasrisng/AuraRay/blob/main/CHANGELOG.md",
+  "documentationUrl": "https://github.com/jayasrisng/AuraRay/tree/main/unity/AuraRayViewer/Packages/com.auraray.foveation",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jayasrisng/AuraRay.git"
+  },
   "author": {
     "name": "Jayasri Sai Nikitha Guthula"
   },

@@ -330,6 +330,34 @@
 ### Next milestone
 - Prepare the AuraRay `v0.1` release polish.
 
+## v0.1.0 Release Polish
+
+### What we built
+- A release-oriented root README with a concise project description, existing demo media, quick starts, architecture, tested platforms, limitations, and roadmap.
+- A `CHANGELOG.md` documenting the complete `0.1.0` feature set.
+- A focused architecture document explaining the boundary between offline C++ rendering and Unity visualization.
+- Complete Unity package discovery metadata for repository, documentation, license, and search keywords.
+
+### Why we built it
+- A public release should be understandable without reading the milestone history.
+- Build and package instructions need to be visible before implementation details.
+- Explicit limitations make the XR simulation claims accurate and set expectations for future work.
+
+### Challenges
+- The README needed to tell a cohesive C++ and Unity story without implying that a native integration already exists.
+- Release media had to use only committed screenshots and renders rather than inventing an unavailable video or GIF.
+- Platform claims needed to distinguish verified macOS and Unity configurations from untested Windows and Linux support.
+
+### What changed
+- Added `CHANGELOG.md` and `docs/architecture.md`.
+- Reorganized `README.md` around product value, quick starts, existing proof media, and release status.
+- Added Unity package keywords, repository, documentation, and MIT license metadata.
+- Updated the package roadmap and license documentation.
+- Confirmed the existing MIT `LICENSE` was already complete and required no change.
+
+### Next milestone
+- Capture final demo media and create the `v0.1.0` tag and GitHub release.
+
 ## Polish: PNG Export for Portfolio Use
 
 ### What we built
