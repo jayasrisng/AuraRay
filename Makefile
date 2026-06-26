@@ -10,6 +10,8 @@ FIRST_SPHERE_PPM := renders/first_sphere.ppm
 FIRST_SPHERE_PNG := renders/first_sphere.png
 ANTIALIAS_SPHERE_PPM := renders/antialias_sphere.ppm
 ANTIALIAS_SPHERE_PNG := renders/antialias_sphere.png
+MINIMAL_RAYTRACER_PPM := renders/minimal_raytracer.ppm
+MINIMAL_RAYTRACER_PNG := renders/minimal_raytracer.png
 
 .PHONY: all run png export clean
 
@@ -26,6 +28,7 @@ png export: run
 	sips -s format png $(FIRST_IMAGE_PPM) --out $(FIRST_IMAGE_PNG)
 	sips -s format png $(FIRST_SPHERE_PPM) --out $(FIRST_SPHERE_PNG)
 	sips -s format png $(ANTIALIAS_SPHERE_PPM) --out $(ANTIALIAS_SPHERE_PNG)
+	sips -s format png $(MINIMAL_RAYTRACER_PPM) --out $(MINIMAL_RAYTRACER_PNG)
 
 clean:
 	rm -rf $(BUILD_DIR)

@@ -76,6 +76,35 @@
 ### Next milestone
 - Consider simple diffuse materials only after comparing the jagged and anti-aliased sphere renders.
 
+## Milestone 1: Minimal Ray Tracer Scene
+
+### What we built
+- A small portfolio-ready ray traced scene at `renders/minimal_raytracer.ppm`.
+- A PNG export at `renders/minimal_raytracer.png`.
+- A minimal material system with diffuse/lambertian and metal materials.
+- Multiple spheres plus a large ground sphere.
+- A camera view aimed at a composed scene instead of a single centered debug sphere.
+- Anti-aliasing and bounded recursive ray bounces for the final scene.
+
+### Why we built it
+- This proves the C++ renderer can do the core Ray Tracing in One Weekend ideas: rays, sphere intersections, anti-aliasing, materials, recursive scattering, and camera composition.
+- Diffuse and metal materials give enough visual variety for a portfolio screenshot without adding glass/refraction complexity yet.
+- Keeping the scene small makes the project fast to build and easy to reason about before gaze-aware rendering.
+
+### Challenges
+- The material system needed to stay minimal instead of becoming a full rendering engine.
+- Recursive ray color needs a max depth so diffuse bounces terminate predictably.
+- Random sampling uses a fixed seed so committed render outputs stay reproducible.
+
+### What changed
+- Updated `src/main.cpp` with hit records, diffuse materials, metal materials, scene intersection, recursive shading, and a camera class.
+- Updated `Makefile` so `make png` exports the minimal ray tracer scene.
+- Updated `README.md` with a “Milestone 1: Minimal Ray Tracer” section and the new PNG.
+- Added `renders/minimal_raytracer.ppm` and `renders/minimal_raytracer.png`.
+
+### Next milestone
+- Add gaze-aware/foveated rendering.
+
 ## Polish: PNG Export for Portfolio Use
 
 ### What we built
