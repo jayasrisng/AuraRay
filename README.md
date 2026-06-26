@@ -56,6 +56,14 @@ Open the Unity project at `unity/AuraRayViewer`, then open the `AuraRayViewer` s
 
 ![Unity Aura Viewer](docs/screenshots/unity_aura_viewer.png)
 
+## Interactive Unity Foveation Simulator
+
+The C++ renderer remains the offline/reference renderer. The Unity scene now simulates how an XR system could move the high-quality region based on gaze, using a movable `EyeTarget` instead of real eye tracking. This prepares AuraRay for future real eye-tracking or native-plugin integration without coupling Unity to the C++ renderer yet.
+
+Open `unity/AuraRayViewer`, run the `AuraRayViewer` scene, and move the gaze target with `WASD` or arrow keys. Use `1`-`4` or the on-screen buttons to switch between Full Quality, Low Quality, Gaze-Aware, and Overlay modes.
+
+![Interactive Unity Foveation Simulator](docs/screenshots/unity_interactive_foveation.png)
+
 ## Gallery
 
 | Milestone | Output |
@@ -72,3 +80,4 @@ Open the Unity project at `unity/AuraRayViewer`, then open the `AuraRayViewer` s
 | Foveated gaze-aware | `renders/foveated_gaze.png` |
 | Foveated overlay | `renders/foveated_overlay.png` |
 | Unity Aura Viewer | `docs/screenshots/unity_aura_viewer.png` |
+| Interactive Unity Foveation Simulator | `docs/screenshots/unity_interactive_foveation.png` |

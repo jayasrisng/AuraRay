@@ -196,6 +196,35 @@
 ### Next milestone
 - Package/polish the demo or add interactive gaze control.
 
+## Pivot Milestone 4: Interactive Unity Foveation Simulator
+
+### What we built
+- A real Unity 3D simulator scene using built-in primitives only.
+- A movable `EyeTarget` reticle controlled by `WASD`, arrow keys, or mouse click.
+- A real-time foveation overlay that follows the gaze target.
+- Four Unity modes: Full Quality, Low Quality, Gaze-Aware, and Overlay.
+- A stats panel showing normalized gaze coordinates, sample tiers, estimated ray budget, and a short usage note.
+- A screenshot artifact at `docs/screenshots/unity_interactive_foveation.png`.
+
+### Why we pivoted from static viewer to interactive simulator
+- The static PNG viewer proved the foveated renderer output, but it felt more like a gallery than an XR interaction demo.
+- AuraRay's portfolio value improves when the Unity side demonstrates the core XR idea live: the high-quality region moves with gaze.
+- The C++ renderer remains the offline/reference renderer, while Unity becomes the interaction layer.
+
+### Challenges
+- The simulator needed to feel interactive without adding XR SDKs, external assets, custom packages, or a native plugin.
+- The foveation effect had to be readable in screenshots, so it uses a simple screen-space overlay with rings, dimming, and deterministic noise.
+- Batchmode screenshots required a camera-space canvas so UI and overlay render into the captured image.
+
+### What changed
+- Added `GazeTargetController`, `FoveationOverlayController`, `AuraRayModeController`, `AuraRayStatsPanel`, and `FoveationMode`.
+- Rebuilt the `AuraRayViewer` scene around a primitive 3D demo scene instead of a static image panel.
+- Updated the editor scene builder with simulator construction, screenshot capture, and smoke-test checks.
+- Updated `README.md` and this devlog.
+
+### Next milestone
+- Polish the Unity package into a reusable foveation demo component.
+
 ## Polish: PNG Export for Portfolio Use
 
 ### What we built
