@@ -18,6 +18,14 @@ XR_LENS_DEMO_PPM := renders/xr_lens_demo.ppm
 XR_LENS_DEMO_PNG := renders/xr_lens_demo.png
 WARM_STUDIO_SPHERES_PPM := renders/warm_studio_spheres.ppm
 WARM_STUDIO_SPHERES_PNG := renders/warm_studio_spheres.png
+FOVEATED_FULL_PPM := renders/foveated_full.ppm
+FOVEATED_FULL_PNG := renders/foveated_full.png
+FOVEATED_LOW_PPM := renders/foveated_low.ppm
+FOVEATED_LOW_PNG := renders/foveated_low.png
+FOVEATED_GAZE_PPM := renders/foveated_gaze.ppm
+FOVEATED_GAZE_PNG := renders/foveated_gaze.png
+FOVEATED_OVERLAY_PPM := renders/foveated_overlay.ppm
+FOVEATED_OVERLAY_PNG := renders/foveated_overlay.png
 
 .PHONY: all run png export clean
 
@@ -38,6 +46,10 @@ png export: run
 	sips -s format png $(GLASS_ORBS_PPM) --out $(GLASS_ORBS_PNG)
 	sips -s format png $(XR_LENS_DEMO_PPM) --out $(XR_LENS_DEMO_PNG)
 	sips -s format png $(WARM_STUDIO_SPHERES_PPM) --out $(WARM_STUDIO_SPHERES_PNG)
+	sips -s format png $(FOVEATED_FULL_PPM) --out $(FOVEATED_FULL_PNG)
+	sips -s format png $(FOVEATED_LOW_PPM) --out $(FOVEATED_LOW_PNG)
+	sips -s format png $(FOVEATED_GAZE_PPM) --out $(FOVEATED_GAZE_PNG)
+	sips -s format png $(FOVEATED_OVERLAY_PPM) --out $(FOVEATED_OVERLAY_PNG)
 
 clean:
 	rm -rf $(BUILD_DIR)

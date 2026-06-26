@@ -21,6 +21,10 @@ Current outputs:
 - `renders/glass_orbs.ppm` / `renders/glass_orbs.png`
 - `renders/xr_lens_demo.ppm` / `renders/xr_lens_demo.png`
 - `renders/warm_studio_spheres.ppm` / `renders/warm_studio_spheres.png`
+- `renders/foveated_full.ppm` / `renders/foveated_full.png`
+- `renders/foveated_low.ppm` / `renders/foveated_low.png`
+- `renders/foveated_gaze.ppm` / `renders/foveated_gaze.png`
+- `renders/foveated_overlay.ppm` / `renders/foveated_overlay.png`
 
 ## Milestone 1: Minimal Ray Tracer
 
@@ -36,6 +40,14 @@ These are intentionally composed sphere-only scenes that make AuraRay visually d
 | --- | --- | --- |
 | ![glass_orbs](renders/glass_orbs.png) | ![xr_lens_demo](renders/xr_lens_demo.png) | ![warm_studio_spheres](renders/warm_studio_spheres.png) |
 
+## Milestone 3: Simulated Foveated Rendering
+
+Full quality uses many rays everywhere. Low quality uses fewer rays everywhere. Gaze-aware rendering spends more rays near a simulated gaze point and fewer rays in the periphery, inspired by XR systems where the user mostly notices detail near where they are looking.
+
+| full quality | low quality | gaze-aware | gaze overlay |
+| --- | --- | --- | --- |
+| ![foveated_full](renders/foveated_full.png) | ![foveated_low](renders/foveated_low.png) | ![foveated_gaze](renders/foveated_gaze.png) | ![foveated_overlay](renders/foveated_overlay.png) |
+
 ## Gallery
 
 | Milestone | Output |
@@ -47,3 +59,7 @@ These are intentionally composed sphere-only scenes that make AuraRay visually d
 | Pretty scene preset: glass_orbs | `renders/glass_orbs.png` |
 | Pretty scene preset: xr_lens_demo | `renders/xr_lens_demo.png` |
 | Pretty scene preset: warm_studio_spheres | `renders/warm_studio_spheres.png` |
+| Foveated full quality | `renders/foveated_full.png` |
+| Foveated low quality | `renders/foveated_low.png` |
+| Foveated gaze-aware | `renders/foveated_gaze.png` |
+| Foveated overlay | `renders/foveated_overlay.png` |

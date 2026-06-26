@@ -426,6 +426,13 @@ class camera {
     vec3 vertical_;
 };
 
+struct preset_scene {
+    scene world;
+    camera cam;
+    std::vector<std::string> materials_used;
+    std::string camera_description;
+};
+
 bool open_ppm(const std::filesystem::path& output_path, int image_width,
               int image_height, std::ofstream& out) {
     out.open(output_path);
@@ -604,6 +611,10 @@ void write_metadata(const std::filesystem::path& metadata_path,
                     int sphere_count,
                     const std::vector<std::string>& materials_used,
                     const std::string& camera_description) {
+    if (std::filesystem::exists(metadata_path)) {
+        return;
+    }
+
     std::ofstream out(metadata_path);
     if (!out) {
         std::cerr << "Failed to open " << metadata_path << " for writing.\n";
@@ -713,7 +724,7 @@ bool render_glass_orbs(const std::filesystem::path& output_dir) {
         3101);
 }
 
-bool render_xr_lens_demo(const std::filesystem::path& output_dir) {
+preset_scene make_xr_lens_demo_scene() {
     const auto ground = std::make_shared<lambertian>(color(0.70, 0.73, 0.78));
     const auto lens = std::make_shared<dielectric>(1.45);
     const auto display_blue =
@@ -735,12 +746,22 @@ bool render_xr_lens_demo(const std::filesystem::path& output_dir) {
     const camera cam(point3(2.0, 0.85, 1.65), point3(0.0, -0.03, -1.0),
                      vec3(0, 1, 0), 34.0, aspect_ratio);
 
-    return render_scene_preset(
-        "xr_lens_demo", world, cam, output_dir / "xr_lens_demo.ppm",
-        output_dir / "xr_lens_demo.png", output_dir / "xr_lens_demo.json",
+    return preset_scene{
+        world,
+        cam,
         {"lambertian", "metal", "dielectric"},
         "XR-inspired composition with a central refractive lens and small "
         "colored display-orb accents.",
+    };
+}
+
+bool render_xr_lens_demo(const std::filesystem::path& output_dir) {
+    const preset_scene preset = make_xr_lens_demo_scene();
+
+    return render_scene_preset(
+        "xr_lens_demo", preset.world, preset.cam, output_dir / "xr_lens_demo.ppm",
+        output_dir / "xr_lens_demo.png", output_dir / "xr_lens_demo.json",
+        preset.materials_used, preset.camera_description,
         3102);
 }
 
@@ -769,6 +790,252 @@ bool render_warm_studio_spheres(const std::filesystem::path& output_dir) {
         output_dir / "warm_studio_spheres.json", {"lambertian", "metal"},
         "Warm studio-style camera looking across a compact sphere arrangement.",
         3103);
+}
+
+struct foveated_settings {
+    std::string render_mode;
+    std::filesystem::path output_ppm;
+    std::filesystem::path output_png;
+    std::filesystem::path metadata_path;
+    int samples_center;
+    int samples_middle;
+    int samples_periphery;
+    unsigned int seed;
+};
+
+double foveated_distance(double x, double y, double gaze_x, double gaze_y) {
+    const double dx = (x - gaze_x) * aspect_ratio;
+    const double dy = y - gaze_y;
+    return std::sqrt(dx * dx + dy * dy);
+}
+
+int foveated_samples_for_pixel(const foveated_settings& settings,
+                               double distance, double foveal_radius,
+                               double transition_radius) {
+    if (distance <= foveal_radius) {
+        return settings.samples_center;
+    }
+    if (distance <= transition_radius) {
+        return settings.samples_middle;
+    }
+    return settings.samples_periphery;
+}
+
+void write_foveated_metadata(
+    const foveated_settings& settings, const std::string& scene_name,
+    int image_height, double gaze_x, double gaze_y, double foveal_radius,
+    double transition_radius, long long estimated_total_rays,
+    long long render_time_ms, const std::vector<std::string>& materials_used,
+    const std::string& camera_description) {
+    if (std::filesystem::exists(settings.metadata_path)) {
+        return;
+    }
+
+    std::ofstream out(settings.metadata_path);
+    if (!out) {
+        std::cerr << "Failed to open " << settings.metadata_path
+                  << " for writing.\n";
+        return;
+    }
+
+    out << "{\n";
+    out << "  \"render_mode\": \"" << settings.render_mode << "\",\n";
+    out << "  \"scene_name\": \"" << scene_name << "\",\n";
+    out << "  \"output_ppm\": \"" << settings.output_ppm.string() << "\",\n";
+    out << "  \"output_png\": \"" << settings.output_png.string() << "\",\n";
+    out << "  \"image_width\": " << image_width << ",\n";
+    out << "  \"image_height\": " << image_height << ",\n";
+    out << "  \"gaze_x\": " << gaze_x << ",\n";
+    out << "  \"gaze_y\": " << gaze_y << ",\n";
+    out << "  \"foveal_radius\": " << foveal_radius << ",\n";
+    out << "  \"transition_radius\": " << transition_radius << ",\n";
+    out << "  \"samples_center\": " << settings.samples_center << ",\n";
+    out << "  \"samples_middle\": " << settings.samples_middle << ",\n";
+    out << "  \"samples_periphery\": " << settings.samples_periphery << ",\n";
+    out << "  \"estimated_total_rays\": " << estimated_total_rays << ",\n";
+    out << "  \"render_time_ms\": " << render_time_ms << ",\n";
+    out << "  \"materials_used\": [";
+    for (std::size_t i = 0; i < materials_used.size(); ++i) {
+        out << "\"" << materials_used[i] << "\"";
+        if (i + 1 < materials_used.size()) {
+            out << ", ";
+        }
+    }
+    out << "],\n";
+    out << "  \"camera_description\": \"" << camera_description << "\"\n";
+    out << "}\n";
+}
+
+bool render_foveated_mode(const preset_scene& preset,
+                          const foveated_settings& settings, double gaze_x,
+                          double gaze_y, double foveal_radius,
+                          double transition_radius) {
+    const int image_height = static_cast<int>(image_width / aspect_ratio);
+
+    std::ofstream out;
+    if (!open_ppm(settings.output_ppm, image_width, image_height, out)) {
+        return false;
+    }
+
+    std::mt19937 rng(settings.seed);
+    long long estimated_total_rays = 0;
+    const auto start = std::chrono::steady_clock::now();
+
+    for (int y = image_height - 1; y >= 0; --y) {
+        for (int x = 0; x < image_width; ++x) {
+            const double x_norm = static_cast<double>(x) / (image_width - 1);
+            const double y_norm = static_cast<double>(y) / (image_height - 1);
+            const double distance =
+                foveated_distance(x_norm, y_norm, gaze_x, gaze_y);
+            const int pixel_samples = foveated_samples_for_pixel(
+                settings, distance, foveal_radius, transition_radius);
+
+            color pixel_color(0, 0, 0);
+            for (int sample = 0; sample < pixel_samples; ++sample) {
+                const double u =
+                    (static_cast<double>(x) + random_double(rng)) /
+                    (image_width - 1);
+                const double v =
+                    (static_cast<double>(y) + random_double(rng)) /
+                    (image_height - 1);
+                pixel_color += scene_ray_color(preset.cam.get_ray(u, v),
+                                               preset.world, max_ray_depth, rng);
+            }
+
+            estimated_total_rays += pixel_samples;
+            write_color(out, pixel_color, pixel_samples, true);
+        }
+    }
+
+    const auto end = std::chrono::steady_clock::now();
+    const auto render_time_ms =
+        std::chrono::duration_cast<std::chrono::milliseconds>(end - start)
+            .count();
+
+    std::cout << "Rendered " << settings.output_ppm << " (" << image_width
+              << "x" << image_height << ", " << settings.render_mode << ")\n";
+
+    write_foveated_metadata(settings, "xr_lens_demo", image_height, gaze_x,
+                            gaze_y, foveal_radius, transition_radius,
+                            estimated_total_rays, render_time_ms,
+                            preset.materials_used,
+                            preset.camera_description);
+    return true;
+}
+
+bool render_foveated_overlay(const std::filesystem::path& output_dir,
+                             double gaze_x, double gaze_y,
+                             double foveal_radius, double transition_radius) {
+    const int image_height = static_cast<int>(image_width / aspect_ratio);
+    const std::filesystem::path output_ppm = output_dir / "foveated_overlay.ppm";
+    const std::filesystem::path output_png = output_dir / "foveated_overlay.png";
+    const std::filesystem::path metadata_path =
+        output_dir / "foveated_overlay.json";
+
+    std::ofstream out;
+    if (!open_ppm(output_ppm, image_width, image_height, out)) {
+        return false;
+    }
+
+    long long estimated_total_rays = 0;
+    const auto start = std::chrono::steady_clock::now();
+
+    for (int y = image_height - 1; y >= 0; --y) {
+        for (int x = 0; x < image_width; ++x) {
+            const double x_norm = static_cast<double>(x) / (image_width - 1);
+            const double y_norm = static_cast<double>(y) / (image_height - 1);
+            const double distance =
+                foveated_distance(x_norm, y_norm, gaze_x, gaze_y);
+
+            color pixel_color(0.08, 0.10, 0.14);
+            if (distance <= foveal_radius) {
+                pixel_color = color(0.15, 0.55, 1.0);
+            } else if (distance <= transition_radius) {
+                pixel_color = color(0.08, 0.28, 0.48);
+            }
+
+            const bool gaze_dot = distance < 0.018;
+            const bool foveal_ring = std::fabs(distance - foveal_radius) < 0.006;
+            const bool transition_ring =
+                std::fabs(distance - transition_radius) < 0.006;
+            if (transition_ring) {
+                pixel_color = color(0.85, 0.95, 1.0);
+            }
+            if (foveal_ring) {
+                pixel_color = color(1.0, 1.0, 1.0);
+            }
+            if (gaze_dot) {
+                pixel_color = color(1.0, 0.18, 0.62);
+            }
+
+            write_color(out, pixel_color);
+        }
+    }
+
+    const auto end = std::chrono::steady_clock::now();
+    const auto render_time_ms =
+        std::chrono::duration_cast<std::chrono::milliseconds>(end - start)
+            .count();
+
+    const foveated_settings overlay_settings{
+        "overlay", output_ppm, output_png, metadata_path, 64, 24, 8, 0};
+    write_foveated_metadata(overlay_settings, "xr_lens_demo", image_height,
+                            gaze_x, gaze_y, foveal_radius, transition_radius,
+                            estimated_total_rays, render_time_ms,
+                            {"overlay"}, "Generated gaze point and foveal ring "
+                                         "visualization for the foveated demo.");
+
+    std::cout << "Rendered " << output_ppm << " (" << image_width << "x"
+              << image_height << ", overlay)\n";
+    return true;
+}
+
+bool render_foveated_comparison(const std::filesystem::path& output_dir) {
+    const preset_scene preset = make_xr_lens_demo_scene();
+    constexpr double gaze_x = 0.5;
+    constexpr double gaze_y = 0.5;
+    constexpr double foveal_radius = 0.18;
+    constexpr double transition_radius = 0.36;
+
+    const foveated_settings full{
+        "full_quality",
+        output_dir / "foveated_full.ppm",
+        output_dir / "foveated_full.png",
+        output_dir / "foveated_full.json",
+        64,
+        64,
+        64,
+        4101,
+    };
+    const foveated_settings low{
+        "low_quality",
+        output_dir / "foveated_low.ppm",
+        output_dir / "foveated_low.png",
+        output_dir / "foveated_low.json",
+        8,
+        8,
+        8,
+        4102,
+    };
+    const foveated_settings gaze{
+        "gaze_aware",
+        output_dir / "foveated_gaze.ppm",
+        output_dir / "foveated_gaze.png",
+        output_dir / "foveated_gaze.json",
+        64,
+        24,
+        8,
+        4103,
+    };
+
+    return render_foveated_mode(preset, full, gaze_x, gaze_y, foveal_radius,
+                                transition_radius) &&
+           render_foveated_mode(preset, low, gaze_x, gaze_y, foveal_radius,
+                                transition_radius) &&
+           render_foveated_mode(preset, gaze, gaze_x, gaze_y, foveal_radius,
+                                transition_radius) &&
+           render_foveated_overlay(output_dir, gaze_x, gaze_y, foveal_radius,
+                                   transition_radius);
 }
 
 int main() {
@@ -800,6 +1067,10 @@ int main() {
     }
 
     if (!render_warm_studio_spheres(output_dir)) {
+        return 1;
+    }
+
+    if (!render_foveated_comparison(output_dir)) {
         return 1;
     }
 

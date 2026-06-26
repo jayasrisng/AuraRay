@@ -136,6 +136,35 @@
 ### Next milestone
 - Add simulated gaze-aware/foveated rendering.
 
+## Milestone 3: Simulated Foveated Rendering
+
+### What we built
+- A foveated rendering comparison using the existing `xr_lens_demo` scene.
+- Full-quality rendering with high samples across the whole image.
+- Low-quality rendering with low samples across the whole image.
+- Gaze-aware rendering with high samples near a simulated gaze point, medium samples in a transition ring, and low samples in the periphery.
+- A simple overlay visualization showing the gaze point and foveal rings.
+- JSON metadata for each foveated output with ray budget estimates and render timings.
+
+### Why we built it
+- AuraRay needs to feel like an XR rendering project, not just a generic ray tracing tutorial clone.
+- Foveated rendering creates a clear XR story: spend render work where the user is looking and save work elsewhere.
+- Using the same scene for all three modes makes the quality tradeoff easy to compare in the README and portfolio.
+
+### Challenges
+- The sampling logic needed to stay simple and readable instead of becoming a full adaptive renderer.
+- The metadata has to communicate ray budget differences without pretending to be real hardware eye tracking.
+- The overlay needed to be useful without spending a lot of time on visualization tooling.
+
+### What changed
+- Updated `src/main.cpp` with foveated sample selection, full/low/gaze render modes, overlay generation, and foveated metadata writing.
+- Updated `Makefile` so `make png` exports all foveated PNGs.
+- Updated `README.md` with a foveated rendering comparison gallery.
+- Added PPM, PNG, and JSON outputs for full, low, gaze-aware, and overlay modes.
+
+### Next milestone
+- Build a Unity XR display viewer.
+
 ## Polish: PNG Export for Portfolio Use
 
 ### What we built

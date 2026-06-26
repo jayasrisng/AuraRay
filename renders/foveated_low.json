@@ -1,0 +1,19 @@
+{
+  "render_mode": "low_quality",
+  "scene_name": "xr_lens_demo",
+  "output_ppm": "renders/foveated_low.ppm",
+  "output_png": "renders/foveated_low.png",
+  "image_width": 400,
+  "image_height": 225,
+  "gaze_x": 0.5,
+  "gaze_y": 0.5,
+  "foveal_radius": 0.18,
+  "transition_radius": 0.36,
+  "samples_center": 8,
+  "samples_middle": 8,
+  "samples_periphery": 8,
+  "estimated_total_rays": 720000,
+  "render_time_ms": 208,
+  "materials_used": ["lambertian", "metal", "dielectric"],
+  "camera_description": "XR-inspired composition with a central refractive lens and small colored display-orb accents."
+}
