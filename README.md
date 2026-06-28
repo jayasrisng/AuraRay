@@ -1,6 +1,6 @@
 # AuraRay
 
-AuraRay is a compact XR rendering study that combines a C++17 offline ray tracer with a reusable Unity foveation toolkit. It is designed for graphics and XR learners, recruiters evaluating rendering work, and developers exploring gaze-aware quality allocation. The project demonstrates deterministic ray tracing, render metadata, simulated foveated sampling, and an interactive gaze-controlled visualization relevant to XR prototyping, optics demos, rendering-budget education, and future eye-tracking experiments.
+AuraRay is an open-source Unity package for visualizing and experimenting with gaze-aware rendering techniques in XR. It combines a custom C++ ray tracer for generating reference renders with an interactive Unity simulator that lets developers explore how gaze position affects image quality, sampling density, and rendering cost. Designed with a reusable package architecture, AuraRay serves as both a learning tool and a foundation for future OpenXR and native plugin integration.
 
 ![AuraRay interactive gaze-aware foveation simulator](docs/media/auraray_hero.png)
 
@@ -126,8 +126,10 @@ The CMake target includes MSVC-compatible warning flags, but Windows and Linux b
 ### Future updates
 
 - Add focused Unity EditMode tests and lightweight CI.
+- Add Android/XR device build documentation.
+- Test the Unity sample on XR hardware.
 - Consider a replaceable gaze-provider interface when a second input source exists.
-- Explore optional OpenXR eye-gaze input.
+- Explore OpenXR eye-gaze input.
 - Evaluate native C++ integration only after the offline and Unity APIs are stable.
 
 ## Documentation
