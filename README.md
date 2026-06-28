@@ -1,12 +1,8 @@
 # AuraRay
 
-<<<<<<< Updated upstream
-AuraRay is an open-source Unity package for visualizing and experimenting with gaze-aware rendering techniques in XR. It combines a custom C++ ray tracer for generating reference renders with an interactive Unity simulator that lets developers explore how gaze position affects image quality, sampling density, and rendering cost. Designed with a reusable package architecture, AuraRay serves as both a learning tool and a foundation for future OpenXR and native plugin integration.
-=======
-AuraRay is an open-source Unity package and C++ renderer for experimenting with gaze-aware rendering techniques in XR.
+AuraRay is an open-source C++ renderer and Unity package for experimenting with gaze-aware rendering techniques in XR.
 
-The repository contains two deliberately separate systems: a deterministic C++17 ray tracer for generating reference images and sampling metadata, and a Unity package for interactively visualizing foveation regions around a simulated gaze point. The current integration is artifact- and concept-based; Unity does not load or execute the C++ renderer.
->>>>>>> Stashed changes
+The project combines a deterministic C++17 ray tracer for generating reference renders with an interactive Unity simulator for exploring how gaze position affects image quality, sampling density, and rendering cost. The two systems are intentionally decoupled: the C++ renderer produces deterministic reference artifacts, while the Unity package visualizes gaze-aware rendering concepts. Unity does not directly execute the C++ renderer.
 
 ![AuraRay interactive gaze-aware foveation simulator](docs/media/auraray_hero.png)
 
@@ -156,27 +152,18 @@ The CMake configuration includes MSVC warning flags, but Windows and Linux build
 
 ## Future Work
 
-<<<<<<< Updated upstream
-### v0.1.0 release
+### v0.1.0
 
-- Create and publish the `v0.1.0` GitHub tag and release.
+- Publish the first GitHub release.
 
-### Future updates
+### Planned Improvements
 
-- Add focused Unity EditMode tests and lightweight CI.
-- Add Android/XR device build documentation.
-- Test the Unity sample on XR hardware.
-- Consider a replaceable gaze-provider interface when a second input source exists.
-- Explore OpenXR eye-gaze input.
-- Evaluate native C++ integration only after the offline and Unity APIs are stable.
-=======
 - Add lightweight CI across macOS and Linux.
-- Add focused unit tests for geometry, material scattering, and foveation sample selection.
-- Introduce a replaceable Unity gaze-provider interface when a second input source exists.
-- Explore optional OpenXR eye-gaze input.
-- Evaluate Project Aura and physical-device deployment as future platform research; neither is currently supported or claimed.
-- Consider native C++/Unity integration only after the offline renderer API and Unity package API are stable.
->>>>>>> Stashed changes
+- Add focused unit tests for geometry, materials, and foveation sampling.
+- Introduce a replaceable Unity gaze-provider interface.
+- Explore optional OpenXR eye-gaze integration.
+- Explore deployment on Project Aura and other XR devices.
+- Investigate native C++/Unity integration once the renderer and Unity package APIs are stable.
 
 ## Documentation
 
