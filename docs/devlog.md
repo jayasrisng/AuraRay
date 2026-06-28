@@ -2,406 +2,193 @@
 
 ## Milestone 1: First Windowless Render
 
-### What we built
-- A minimal windowless C++ app that writes `renders/first_image.ppm`.
-- A small `Makefile` so the project can build with the compiler already available on this Mac.
-
-### Why we built it
-- The first milestone should prove the core rendering pipeline before adding ray tracing, Unity, XR framing, or build-system complexity.
-- PPM keeps the first output dependency-free and easy to inspect.
+### Built
+- Created a minimal C++ application that writes `renders/first_image.ppm`.
+- Added a lightweight `Makefile` for local builds.
+- Initialized the project structure and `.gitignore`.
 
 ### Challenges
-- CMake is not currently available on PATH, so this milestone uses `make` plus `c++` directly.
-- The workspace was not a git repository yet, so git setup is part of this first checkpoint.
+- Used a Makefile instead of CMake for the initial setup.
+- Kept the renderer dependency-free by writing directly to the PPM format.
 
-### What changed
-- Added `.gitignore`.
-- Added `Makefile`.
-- Added `src/main.cpp`.
-- Added this devlog.
-
-### Next milestone
-- Add the first actual ray tracing primitive: a camera, rays, and one visible sphere.
+### Next
+- Implement camera rays and render the first sphere.
 
 ## Milestone 2: First Sphere With Camera Rays
 
-### What we built
-- A tiny ray tracer that sends one camera ray through each pixel.
-- Minimal `vec3`, `ray`, sphere hit-test, and camera viewport logic.
-- A new render output: `renders/first_sphere.ppm`.
-- A PNG export for the new sphere render: `renders/first_sphere.png`.
+### Built
+- Implemented `vec3`, `ray`, camera, and sphere intersection.
+- Added normal-based shading.
+- Generated `first_sphere.ppm` and PNG export.
+- Updated the build scripts and README.
 
-### Why we built it
-- This is the first real ray tracing concept in AuraRay: pixels are computed by tracing rays into a scene.
-- Surface normals are rendered as color because they make sphere geometry visible without adding materials, lights, shadows, or reflections.
-- Keeping the first gradient render preserves the milestone 1 proof while the sphere render becomes the milestone 2 proof.
+### Next
+- Add anti-aliasing.
 
-### Challenges
-- The goal was to add ray tracing structure without expanding into a full engine too early.
-- The render still uses simple PPM output so the C++ code stays dependency-free.
-- PNG remains an export convenience handled by macOS `sips`.
+## Milestone 3: Anti-Aliased Rendering
 
-### What changed
-- Updated `src/main.cpp` with `vec3`, `ray`, sphere intersection, camera rays, and normal-color rendering.
-- Updated `Makefile` so `make png` exports both milestone images.
-- Updated `README.md` with basic build/export commands.
-- Added `renders/first_sphere.ppm` and `renders/first_sphere.png`.
-
-### Next milestone
-- Add simple materials and lighting only after the one-sphere ray pipeline is committed and understood.
-
-## Milestone 3: Anti-Aliased Sphere Edges
-
-### What we built
-- A new anti-aliased sphere render at `renders/antialias_sphere.ppm`.
-- A PNG export at `renders/antialias_sphere.png`.
-- Configurable `samples_per_pixel` near the top of `src/main.cpp`.
-- Random jitter inside each pixel so each final pixel averages multiple nearby camera rays.
-
-### Why we built it
-- Anti-aliasing makes the sphere edge look smoother and more portfolio-ready without changing the scene itself.
-- This teaches the next core ray tracing concept: one pixel can represent an average of multiple samples, not just one ray.
-- We kept materials, reflections, and lighting out so the milestone stays focused on sampling.
+### Built
+- Added configurable multi-sample anti-aliasing.
+- Implemented jittered ray sampling with a fixed random seed.
+- Generated anti-aliased PPM and PNG outputs.
 
 ### Challenges
-- Random sampling can make committed images change every run, so the renderer uses a fixed RNG seed for reproducible output.
-- The renderer still writes PPM as the raw output and uses `sips` only for PNG export.
+- Used deterministic sampling to keep render outputs reproducible.
 
-### What changed
-- Updated `src/main.cpp` with jittered multi-sample rendering for the sphere.
-- Updated `Makefile` so `make png` exports the anti-aliased render.
-- Updated `README.md` with the new output and a small gallery table.
-- Added `renders/antialias_sphere.ppm` and `renders/antialias_sphere.png`.
+### Next
+- Add materials and recursive ray tracing.
 
-### Next milestone
-- Consider simple diffuse materials only after comparing the jagged and anti-aliased sphere renders.
+## Milestone 4: Minimal Ray Tracer
 
-## Milestone 1: Minimal Ray Tracer Scene
-
-### What we built
-- A small portfolio-ready ray traced scene at `renders/minimal_raytracer.ppm`.
-- A PNG export at `renders/minimal_raytracer.png`.
-- A minimal material system with diffuse/lambertian and metal materials.
-- Multiple spheres plus a large ground sphere.
-- A camera view aimed at a composed scene instead of a single centered debug sphere.
-- Anti-aliasing and bounded recursive ray bounces for the final scene.
-
-### Why we built it
-- This proves the C++ renderer can do the core Ray Tracing in One Weekend ideas: rays, sphere intersections, anti-aliasing, materials, recursive scattering, and camera composition.
-- Diffuse and metal materials give enough visual variety for a portfolio screenshot without adding glass/refraction complexity yet.
-- Keeping the scene small makes the project fast to build and easy to reason about before gaze-aware rendering.
+### Built
+- Added Lambertian and metal materials.
+- Implemented recursive ray scattering.
+- Added a ground sphere and multiple scene objects.
+- Created `minimal_raytracer` render output.
 
 ### Challenges
-- The material system needed to stay minimal instead of becoming a full rendering engine.
-- Recursive ray color needs a max depth so diffuse bounces terminate predictably.
-- Random sampling uses a fixed seed so committed render outputs stay reproducible.
+- Limited recursion depth to keep rendering stable.
 
-### What changed
-- Updated `src/main.cpp` with hit records, diffuse materials, metal materials, scene intersection, recursive shading, and a camera class.
-- Updated `Makefile` so `make png` exports the minimal ray tracer scene.
-- Updated `README.md` with a “Milestone 1: Minimal Ray Tracer” section and the new PNG.
-- Added `renders/minimal_raytracer.ppm` and `renders/minimal_raytracer.png`.
+### Next
+- Build reusable scene presets.
 
-### Next milestone
-- Add gaze-aware/foveated rendering.
+## Milestone 5: Scene Presets
 
-## Milestone 2: Pretty Scene Presets
-
-### What we built
-- Three named scene preset renders:
+### Built
+- Added three predefined scenes:
   - `glass_orbs`
   - `xr_lens_demo`
   - `warm_studio_spheres`
-- PNG exports for all three presets.
-- JSON metadata files beside each preset render with render settings, timing, sphere count, materials, and camera notes.
-- A compact dielectric/glass material for the cool-toned orb and XR lens scenes.
+- Added PNG exports and JSON metadata.
+- Recorded render settings and timing information.
 
-### Why we built it
-- The renderer already worked technically; this milestone makes the project look intentional and portfolio-ready.
-- Spheres are enough to create distinct moods when camera placement, color, material choices, and composition are deliberate.
-- Metadata makes each render more credible by documenting how it was generated.
+### Next
+- Implement simulated foveated rendering.
 
-### Challenges
-- The code needed to stay simple instead of turning into a full scene system.
-- Glass/refraction had to remain small and stable, so it was limited to one compact dielectric material.
-- Previous proof renders needed to remain intact while adding new gallery-ready outputs.
+## Milestone 6: Simulated Foveated Rendering
 
-### What changed
-- Updated `src/main.cpp` with three explicit scene preset functions.
-- Added metadata writing with `std::chrono` render timing.
-- Updated `Makefile` so `make png` exports all preset PNGs.
-- Updated `README.md` with a Scene Presets gallery.
-- Added PPM, PNG, and JSON files for all three presets.
-
-### Next milestone
-- Add simulated gaze-aware/foveated rendering.
-
-## Milestone 3: Simulated Foveated Rendering
-
-### What we built
-- A foveated rendering comparison using the existing `xr_lens_demo` scene.
-- Full-quality rendering with high samples across the whole image.
-- Low-quality rendering with low samples across the whole image.
-- Gaze-aware rendering with high samples near a simulated gaze point, medium samples in a transition ring, and low samples in the periphery.
-- A simple overlay visualization showing the gaze point and foveal rings.
-- JSON metadata for each foveated output with ray budget estimates and render timings.
-
-### Why we built it
-- AuraRay needs to feel like an XR rendering project, not just a generic ray tracing tutorial clone.
-- Foveated rendering creates a clear XR story: spend render work where the user is looking and save work elsewhere.
-- Using the same scene for all three modes makes the quality tradeoff easy to compare in the README and portfolio.
+### Built
+- Added Full Quality, Low Quality, and Gaze-Aware rendering modes.
+- Implemented sample allocation based on a simulated gaze position.
+- Added overlay visualization and render metadata.
+- Generated comparison images for all render modes.
 
 ### Challenges
-- The sampling logic needed to stay simple and readable instead of becoming a full adaptive renderer.
-- The metadata has to communicate ray budget differences without pretending to be real hardware eye tracking.
-- The overlay needed to be useful without spending a lot of time on visualization tooling.
+- Balanced image quality while keeping the sampling logic simple.
 
-### What changed
-- Updated `src/main.cpp` with foveated sample selection, full/low/gaze render modes, overlay generation, and foveated metadata writing.
-- Updated `Makefile` so `make png` exports all foveated PNGs.
-- Updated `README.md` with a foveated rendering comparison gallery.
-- Added PPM, PNG, and JSON outputs for full, low, gaze-aware, and overlay modes.
+### Next
+- Visualize the renderer inside Unity.
 
-### Next milestone
-- Build a Unity XR display viewer.
+## Milestone 7: Unity Viewer
 
-## Milestone 4: Unity Aura Viewer
-
-### What we built
-- A Unity project at `unity/AuraRayViewer`.
-- An `AuraRayViewer` scene with a dark XR-inspired display surface.
-- A large render panel that shows the foveated PNG outputs from the C++ renderer.
-- Buttons and keyboard shortcuts for Full Quality, Low Quality, Gaze-Aware, and Overlay / Heatmap modes.
-- A metadata panel that updates with render mode, estimated rays, render time, samples, gaze point, and scene name.
-- A gaze marker and foveal ring overlay for the gaze-aware view.
-- A screenshot artifact at `docs/screenshots/unity_aura_viewer.png`.
-
-### Why we built it
-- AuraRay needs to feel like an XR product/demo, not only a command-line renderer.
-- Unity is a viewer here, which keeps the C++ renderer separate and avoids native plugin complexity.
-- Showing images and metadata together makes the foveated rendering tradeoff easier to understand.
+### Built
+- Created a Unity project for viewing renderer outputs.
+- Displayed rendered images alongside render metadata.
+- Added controls for switching between rendering modes.
+- Implemented gaze overlay visualization.
 
 ### Challenges
-- The Unity project needed to avoid committing generated `Library`, `Logs`, and user-specific files.
-- Unity's default project did not include UGUI, so the viewer explicitly adds Unity's `com.unity.ugui` package.
-- The gaze overlay needed to be visible in screenshots and play mode, so it is generated as a transparent overlay texture.
+- Organized Unity assets while excluding generated project files.
 
-### What changed
-- Added the Unity project scaffold under `unity/AuraRayViewer`.
-- Copied the foveated PNG and JSON outputs into Unity `Resources`.
-- Added small Unity scripts for metadata parsing, viewer control, and gaze overlay rendering.
-- Added an editor scene builder/smoke test helper.
-- Updated `.gitignore`, `README.md`, and this devlog.
+### Next
+- Replace the static viewer with an interactive simulator.
 
-### Next milestone
-- Package/polish the demo or add interactive gaze control.
+## Milestone 8: Interactive Foveation Simulator
 
-## Pivot Milestone 4: Interactive Unity Foveation Simulator
+### Built
+- Replaced the image viewer with an interactive Unity scene.
+- Added a movable gaze target controlled by keyboard or mouse.
+- Implemented live foveation visualization.
+- Added four visualization modes:
+  - Full Quality
+  - Low Quality
+  - Gaze-Aware
+  - Overlay
+- Added a runtime statistics panel.
 
-### What we built
-- A real Unity 3D simulator scene using built-in primitives only.
-- A movable `EyeTarget` reticle controlled by `WASD`, arrow keys, or mouse click.
-- A real-time foveation overlay that follows the gaze target.
-- Four Unity modes: Full Quality, Low Quality, Gaze-Aware, and Overlay.
-- A stats panel showing normalized gaze coordinates, sample tiers, estimated ray budget, and a short usage note.
-- A screenshot artifact at `docs/screenshots/unity_interactive_foveation.png`.
+### Design Decision
+The Unity project evolved from a static viewer into an interactive simulator while keeping the C++ renderer as the offline reference implementation.
 
-### Why we pivoted from static viewer to interactive simulator
-- The static PNG viewer proved the foveated renderer output, but it felt more like a gallery than an XR interaction demo.
-- AuraRay's portfolio value improves when the Unity side demonstrates the core XR idea live: the high-quality region moves with gaze.
-- The C++ renderer remains the offline/reference renderer, while Unity becomes the interaction layer.
+### Next
+- Package the simulator for reuse.
 
-### Challenges
-- The simulator needed to feel interactive without adding XR SDKs, external assets, custom packages, or a native plugin.
-- The foveation effect had to be readable in screenshots, so it uses a simple screen-space overlay with rings, dimming, and deterministic noise.
-- Batchmode screenshots required a camera-space canvas so UI and overlay render into the captured image.
+## Milestone 9: Unity Package
 
-### What changed
-- Added `GazeTargetController`, `FoveationOverlayController`, `AuraRayModeController`, `AuraRayStatsPanel`, and `FoveationMode`.
-- Rebuilt the `AuraRayViewer` scene around a primitive 3D demo scene instead of a static image panel.
-- Updated the editor scene builder with simulator construction, screenshot capture, and smoke-test checks.
-- Updated `README.md` and this devlog.
-
-### Next milestone
-- Polish the Unity package into a reusable foveation demo component.
-
-## Phase 4: Unity Package
-
-### What we built
-- An embedded Unity package at `unity/AuraRayViewer/Packages/com.auraray.foveation`.
-- Separate runtime and editor assemblies for the reusable simulator components and scene-building tools.
-- An importable `Interactive Foveation Demo` sample containing the working simulator scene.
-- Package documentation covering installation, components, controls, limitations, and future direction.
-
-### Why we built it
-- Packaging turns the simulator from project-specific code into a reusable Unity toolkit.
-- A sample scene demonstrates the intended wiring without forcing consumers to copy the original project structure.
-- The package boundary keeps the Unity simulator independent from the C++ offline/reference renderer.
+### Built
+- Converted the simulator into an embedded Unity package.
+- Split runtime and editor assemblies.
+- Added an importable sample scene.
+- Documented installation and package usage.
 
 ### Challenges
-- Unity scenes reference scripts by GUID, so the runtime scripts and their `.meta` files had to move together.
-- The sample scene needed its own asset GUID so importing it would not conflict with the working scene retained in the viewer project.
-- The package needed an explicit UGUI dependency and assembly references while staying free of OpenXR, native plugins, and external assets.
+- Preserved Unity GUIDs while reorganizing package assets.
 
-### What changed
-- Moved the five interactive runtime scripts into the package `Runtime` folder.
-- Moved `AuraRaySceneBuilder` into the package `Editor` folder.
-- Added `package.json`, assembly definitions, package documentation, and the simulator sample scene.
-- Extended Unity cache ignore rules for nested memory captures and recordings.
-- Left the C++ renderer and its build flow unchanged.
+### Next
+- Improve component configurability.
 
-### Next milestone
-- Polish the reusable components with an inspector-friendly API.
+## Milestone 10: Reusable Components
 
-## Phase 5: Reusable Unity Components
+### Built
+- Added Inspector-friendly configuration for all runtime components.
+- Exposed gaze radius, sample counts, overlay settings, and movement controls.
+- Added runtime validation and improved API documentation.
 
-### What we built
-- Inspector-friendly controls for the existing mode, gaze, overlay, and stats components.
-- Configurable foveal and transition radii, `64/24/8` sample tiers, overlay opacity, ring visibility, noise, dimming, movement speed, and starting mode.
-- Lightweight validation for gaze coordinates, radius ordering, sample counts, and visual strengths.
-- Concise public API documentation and expanded package setup guidance.
+### Next
+- Verify installation in a clean Unity project.
 
-### Why we built it
-- A reusable Unity package should be configurable through the Inspector instead of requiring source edits.
-- Clear component responsibilities make the simulator easier to understand and integrate.
-- Validation protects the demo from invalid settings without introducing a larger framework or custom editor.
+## Milestone 11: Package Verification
 
-### Challenges
-- Existing Unity class names, script GUIDs, and serialized scene references needed to remain stable.
-- Configurable sample counts had to update both overlay behavior and stats calculations consistently.
-- Optional UI references needed to fail gracefully while preserving overlay and gaze behavior.
+### Built
+- Tested package installation in a clean Unity project.
+- Verified sample import through the Unity Package Manager.
+- Confirmed runtime components, scene loading, and package dependencies.
 
-### What changed
-- Polished the five existing runtime types in place without wrappers or renames.
-- Added tooltips, ranges, runtime guards, `OnValidate` checks, and focused XML API summaries.
-- Added explicit new defaults to both the live viewer scene and package sample.
-- Expanded the package README and root README with reusable component guidance.
-- Left the C++ renderer and package architecture unchanged.
+### Next
+- Improve native build portability.
 
-### Next milestone
-- Add CMake build support for the C++ renderer or prepare the `v0.1` release.
+## Milestone 12: CMake Support
 
-## AuraRay v0.1 Step 1: Clean Unity Package Install Verification
+### Built
+- Added a root `CMakeLists.txt`.
+- Added Makefile helpers for configure, build, and run.
+- Updated ignore rules and documentation.
 
-### What we built
-- A disposable Unity 6000.3.17f1 consumer project under `/tmp` for package verification.
-- A temporary editor-only test harness that installed the local package, imported its declared sample, opened the scene, and checked its runtime components.
+### Next
+- Prepare the first public release.
 
-### Why we built it
-- Testing only inside the AuraRay viewer project could hide undeclared dependencies or package-cache assumptions.
-- A fresh-project import proves the package works through the same local Unity Package Manager workflow another developer would use.
+## Milestone 13: Release Preparation
 
-### Challenges
-- Unity's package sample import is an editor API operation, so the temporary verifier ran it in a separate batchmode pass before scene validation.
-- The validation needed to distinguish package failures from test-harness compiler issues; no repository code was changed to accommodate the harness.
+### Built
+- Reorganized the README.
+- Added `CHANGELOG.md`.
+- Added architecture documentation.
+- Completed Unity package metadata.
 
-### What changed
-- Verified `com.auraray.foveation@0.1.0` resolves as a local package with its declared `com.unity.ugui` dependency.
-- Verified both package assemblies compile in a fresh project.
-- Imported **Interactive Foveation Demo** into the standard `Assets/Samples` location.
-- Opened the imported scene with zero missing scripts and confirmed gaze movement, all four modes, stats wiring, and ray-budget estimation.
-- Added clean-install verification notes to both README files. No package implementation fix was required.
+### Next
+- Capture release media.
 
-### Next milestone
-- Prepare the `v0.1` release metadata and portfolio presentation, or add CMake build support separately.
+## Milestone 14: Demo Media
 
-## CMake Build Support
-
-### What we built
-- A root-level CMake project that builds the existing renderer as the `auraray` executable.
-- Optional Makefile wrappers for CMake configure, build, and run commands.
-- Ignore rules for CMake-generated files outside the standard build directory.
-
-### Why CMake was added now
-- The Unity package is independently verified, so renderer build portability can improve without mixing Unity and native-plugin work.
-- CMake makes the renderer easier to build on macOS, Linux, and Windows while preserving the lightweight Makefile workflow.
+### Built
+- Added automated Unity capture tooling.
+- Generated release screenshots.
+- Created an animated simulator GIF.
+- Generated a labeled comparison image from renderer outputs.
+- Documented the media generation workflow.
 
 ### Challenges
-- The CMake target needed to match the established C++17 requirement and warning level without changing renderer behavior.
-- The executable must run from the repository root because render output paths are intentionally relative to `renders/`.
-- CMake artifacts needed to remain isolated under `build/` and out of version control.
+- Built the media pipeline using native macOS tools without external image-processing dependencies.
 
-### What changed
-- Added `CMakeLists.txt` using C++17 and platform-appropriate warning flags.
-- Added `cmake-configure`, `cmake-build`, and `cmake-run` Makefile targets.
-- Updated `.gitignore` and `README.md` with the portable build workflow.
-- Left `src/main.cpp`, the existing Makefile targets, Unity package, and previous renders unchanged.
+### Next
+- Finalize the v0.1.0 release.
 
-### Next milestone
-- Prepare the AuraRay `v0.1` release polish.
+## Miscellaneous Improvements
 
-## v0.1.0 Release Polish
+### PNG Export
 
-### What we built
-- A release-oriented root README with a concise project description, existing demo media, quick starts, architecture, tested platforms, limitations, and roadmap.
-- A `CHANGELOG.md` documenting the complete `0.1.0` feature set.
-- A focused architecture document explaining the boundary between offline C++ rendering and Unity visualization.
-- Complete Unity package discovery metadata for repository, documentation, license, and search keywords.
+#### Built
+- Added `make png` and `make export` commands.
+- Automated PPM to PNG conversion for renderer outputs.
 
-### Why we built it
-- A public release should be understandable without reading the milestone history.
-- Build and package instructions need to be visible before implementation details.
-- Explicit limitations make the XR simulation claims accurate and set expectations for future work.
-
-### Challenges
-- The README needed to tell a cohesive C++ and Unity story without implying that a native integration already exists.
-- Release media had to use only committed screenshots and renders rather than inventing an unavailable video or GIF.
-- Platform claims needed to distinguish verified macOS and Unity configurations from untested Windows and Linux support.
-
-### What changed
-- Added `CHANGELOG.md` and `docs/architecture.md`.
-- Reorganized `README.md` around product value, quick starts, existing proof media, and release status.
-- Added Unity package keywords, repository, documentation, and MIT license metadata.
-- Updated the package roadmap and license documentation.
-- Confirmed the existing MIT `LICENSE` was already complete and required no change.
-
-### Next milestone
-- Capture final demo media and create the `v0.1.0` tag and GitHub release.
-
-## v0.1.0 Demo Media
-
-### What we built
-- A deterministic Unity editor capture that generates a release hero and 60 simulator frames.
-- An animated GIF showing Full Quality, Low Quality, moving Gaze-Aware, and Overlay modes.
-- A labeled comparison image composed from the four existing C++ foveated outputs.
-- Reproducible `make demo-media` and `make comparison-image` workflows.
-
-### Why we built it
-- A public repository needs to communicate the interactive XR concept before a reader opens Unity.
-- Reproducible media prevents release screenshots from drifting away from the committed scene and renderer outputs.
-- One labeled comparison makes the C++ sampling tradeoff easier to understand than four independent thumbnails.
-
-### Challenges
-- `ffmpeg`, ImageMagick, and Pillow were unavailable, so the final PNG and GIF composition uses built-in macOS Swift, AppKit, and ImageIO.
-- Unity uses a per-user temporary path by default, so the Makefile passes an explicit frame directory shared with the encoder.
-- Temporary frames needed enough resolution for readable UI without adding dozens of large files to Git.
-
-### What changed
-- Added `AuraRayDemoCapture` as project-level editor tooling without modifying the package runtime.
-- Added `scripts/generate_demo_media.swift` and documented manual video capture steps.
-- Added the hero, animated GIF, and foveated comparison under `docs/media/`.
-- Updated the root README to feature the final release media.
-- Kept the 60 generated frame PNGs under `/tmp` and out of the repository.
-
-### Next milestone
-- Run the final clean clone test and create the `v0.1.0` tag and GitHub release.
-
-## Polish: PNG Export for Portfolio Use
-
-### What we built
-- A `make png` / `make export` target that converts `renders/first_image.ppm` to `renders/first_image.png`.
-
-### Why we built it
-- PPM stays as the renderer's raw output because it is simple, transparent, and dependency-free while learning rendering fundamentals.
-- PNG is useful for GitHub, README images, portfolio screenshots, and social sharing because browsers and preview tools support it directly.
-
-### Challenges
-- We avoided image-writing libraries and kept conversion outside the renderer.
-- The available lightweight macOS tool is `sips`, so the export flow uses that instead of adding ImageMagick or a C++ PNG dependency.
-
-### What changed
-- Updated `Makefile` with `png` and `export` targets.
-- Generated a PNG version of the first render.
-
-### Next milestone
-- Add the first actual ray tracing primitive: a camera, rays, and one visible sphere.
+#### Next
+- Continue improving renderer features while keeping export workflows lightweight.
