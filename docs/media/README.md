@@ -32,7 +32,7 @@ make comparison-image
 
 ## Manual video capture
 
-For a narrated or higher-frame-rate portfolio clip, open `unity/AuraRayViewer`, run `AuraRayViewer.unity`, and record the Game view while:
+For a narrated or higher-frame-rate demo clip, open `unity/AuraRayViewer`, run `AuraRayViewer.unity`, and record the Game view while:
 
 1. Moving gaze with `WASD`, arrow keys, or mouse clicks.
 2. Switching through Full Quality, Low Quality, Gaze-Aware, and Overlay with keys `1` through `4`.

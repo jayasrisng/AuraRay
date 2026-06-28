@@ -4,8 +4,9 @@ AuraRay separates offline rendering research from interactive XR visualization. 
 
 ```text
 +-------------------------+
-| C++ Offline Renderer    |
-| src/main.cpp            |
+| C++ Renderer Library    |
+| core / geometry /       |
+| materials / render / io |
 +------------+------------+
              | writes
              v
@@ -31,7 +32,15 @@ AuraRay separates offline rendering research from interactive XR visualization. 
 
 ## C++ renderer
 
-The renderer produces deterministic reference images and metadata. Its foveated modes vary sample counts by distance from a simulated gaze point. It is built independently with Make or CMake.
+The `auraray_renderer` CMake target contains reusable rendering code, while `src/main.cpp` provides the `auraray` CLI. The renderer produces deterministic reference images and metadata. Its foveated modes vary sample counts by distance from a simulated gaze point.
+
+| Source directory | Responsibility |
+| --- | --- |
+| `core` | Math, rays, camera, and random sampling |
+| `geometry` | Intersection contracts and sphere traversal |
+| `materials` | Scattering models |
+| `render` | Scene setup, render orchestration, and foveation policy |
+| `io` | PPM and metadata serialization |
 
 ## Render artifacts
 

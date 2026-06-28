@@ -12,7 +12,8 @@ UNITY_PROJECT := $(CURDIR)/unity/AuraRayViewer
 DEMO_FRAME_DIR ?= /tmp/AuraRayDemoFrames
 MEDIA_DIR := docs/media
 SWIFT_CACHE_DIR ?= /tmp/auraray-swift-cache
-SRC := src/main.cpp
+SRC := $(wildcard src/*.cpp src/core/*.cpp src/geometry/*.cpp src/io/*.cpp src/materials/*.cpp src/render/*.cpp)
+HEADERS := $(wildcard src/core/*.h src/geometry/*.h src/io/*.h src/materials/*.h src/render/*.h)
 FIRST_IMAGE_PPM := renders/first_image.ppm
 FIRST_IMAGE_PNG := renders/first_image.png
 FIRST_SPHERE_PPM := renders/first_sphere.ppm
@@ -36,16 +37,19 @@ FOVEATED_GAZE_PNG := renders/foveated_gaze.png
 FOVEATED_OVERLAY_PPM := renders/foveated_overlay.ppm
 FOVEATED_OVERLAY_PNG := renders/foveated_overlay.png
 
-.PHONY: all run png export cmake-configure cmake-build cmake-run comparison-image demo-frames demo-media clean
+.PHONY: all run verify png export cmake-configure cmake-build cmake-run comparison-image demo-frames demo-media clean
 
 all: $(TARGET)
 
-$(TARGET): $(SRC)
+$(TARGET): $(SRC) $(HEADERS)
 	mkdir -p $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) $(SRC) -o $(TARGET)
+	$(CXX) $(CXXFLAGS) -Isrc $(SRC) -o $(TARGET)
 
 run: $(TARGET)
 	./$(TARGET)
+
+verify: $(TARGET)
+	sh scripts/verify_render_reproducibility.sh $(TARGET)
 
 png export: run
 	sips -s format png $(FIRST_IMAGE_PPM) --out $(FIRST_IMAGE_PNG)

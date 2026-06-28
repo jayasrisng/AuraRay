@@ -13,3 +13,5 @@ All notable changes to AuraRay are documented in this file.
 - Reusable `com.auraray.foveation` Unity package with runtime/editor assemblies and an importable demo sample.
 - Fresh Unity project verification covering local package installation, declared dependencies, sample import, scene loading, and missing-script checks.
 - Makefile and CMake build workflows for the C++ renderer.
+- Modular C++ renderer library with separated core, geometry, material, rendering, scene, foveation, and IO components.
+- Deterministic render validation through CTest and committed SHA-256 expectations.

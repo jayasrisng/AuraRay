@@ -1,0 +1,18 @@
+#pragma once
+
+#include "materials/Material.h"
+
+namespace auraray::materials {
+
+class Lambertian final : public Material {
+  public:
+    explicit Lambertian(const core::Color& albedo);
+    bool scatter(const core::Ray& incoming, const geometry::HitRecord& hit,
+                 core::Color& attenuation, core::Ray& scattered,
+                 std::mt19937& random) const override;
+
+  private:
+    core::Color albedo_;
+};
+
+}  // namespace auraray::materials
