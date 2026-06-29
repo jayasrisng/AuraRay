@@ -18,14 +18,20 @@ The project combines a deterministic C++17 ray tracer for generating reference r
 
 ![AuraRay foveated rendering comparison](docs/media/foveated_comparison.png)
 
-## Architecture
+## How It Works
 
-```text
-C++ renderer -> PPM / PNG / JSON reference artifacts
-                                  |
-                                  v
-Unity package -> interactive foveation simulator
+```mermaid
+flowchart LR
+    A["C++17 renderer"] --> B["Sphere scenes and foveation policy"]
+    B --> C["PPM images and JSON metadata"]
+    C --> D["PNG reference renders"]
+    C -. "reference data" .-> E["Unity foveation package"]
+    E --> F["Interactive gaze simulator"]
+    G["Keyboard or mouse gaze input"] --> F
+    F --> H["Moving quality regions and ray-budget visualization"]
 ```
+
+The renderer and Unity package are intentionally independent. The renderer creates reproducible offline reference artifacts; the Unity package demonstrates the same foveation concepts interactively without executing the C++ code.
 
 The C++ source is organized by responsibility:
 
@@ -158,7 +164,7 @@ The CMake configuration includes MSVC warning flags, but Windows and Linux build
 
 ### Planned Improvements
 
-- Add lightweight CI across macOS and Linux.
+- Extend CI with Unity package validation and focused test coverage.
 - Add focused unit tests for geometry, materials, and foveation sampling.
 - Introduce a replaceable Unity gaze-provider interface.
 - Explore optional OpenXR eye-gaze integration.
